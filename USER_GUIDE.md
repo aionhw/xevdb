@@ -31,12 +31,20 @@ always-block that drives it, *and* the error the sim printed nearby."
 ## 2. Install
 
 ```sh
-bash install.sh           # creates .venv, builds the Rust SV parser, smoke-tests
+bash install.sh           # venv + clone/build the SV parser + smoke-test
 source .venv/bin/activate
 ```
 
-Requires Python ≥ 3.10 and Rust ≥ 1.75 (`cargo`). For very large dumps
-there is an optional DuckDB backend: `bash install.sh --with-duckdb`.
+Requires Python ≥ 3.10, Rust ≥ 1.75 (`cargo`), and `git`. The
+SystemVerilog parser is not vendored — `install.sh` clones it from
+`aionhw/xezim-core` into `./xezim-core/` and builds it; re-running the
+installer `git pull`s that checkout. Override the source with the
+`XEZIM_CORE_REPO` / `XEZIM_CORE_REF` environment variables. For very
+large dumps there is an optional DuckDB backend:
+`bash install.sh --with-duckdb`.
+
+No Rust? `bash install.sh --no-rust` still installs the waveform and
+X/Z sides; only the RTL features are skipped.
 
 Verify:
 

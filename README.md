@@ -4,8 +4,9 @@
 source code, run stored SQL "prompts", cache results — all in one
 self-contained `.xevdb` file. Zero AI dependencies.
 
-Combines `vcdb` (waveform ingest) with a vendored Rust SystemVerilog parser
-(`xezim-parser`) so the same `.xevdb` file holds:
+Combines `vcdb` (waveform ingest) with the `xezim-parser` Rust
+SystemVerilog parser (cloned + built by `install.sh`) so the same
+`.xevdb` file holds:
 
 - VCD signal definitions and value changes
 - Parsed RTL modules, ports, internal signal declarations, instantiations
@@ -31,15 +32,42 @@ queryable file you can hand to a teammate or pipe through `jq`.
 ## Install
 
 ```sh
-bash install.sh                   # creates .venv, builds sv-parse, smoke-tests
+bash install.sh                   # venv + clone/build sv-parse + smoke-test
 # or, opt-in to the DuckDB backend for very large dumps:
 bash install.sh --with-duckdb
 
 source .venv/bin/activate
 ```
 
-Requires Python ≥ 3.10 and Rust ≥ 1.75 (`cargo`). `click` is the only
-third-party Python dep.
+`install.sh` runs five idempotent steps: prerequisite checks → Python
+venv + `pip install -e .` → **clone the SystemVerilog parser** → build
+it → smoke-test the full pipeline.
+
+The parser (`sv-parse`) is **not vendored** — `install.sh` clones it
+from [`aionhw/xezim-core`](https://github.com/aionhw/xezim-core) into
+`./xezim-core/` and `cargo build`s it there. Re-running the installer
+`git pull`s that checkout, so a stale parser is one `bash install.sh`
+away from current. `./xezim-core/` is git-ignored — it is an
+installer-managed clone, not part of this repo.
+
+**Requirements:** Python ≥ 3.10, Rust ≥ 1.75 (`cargo`), and `git`.
+`click` is the only third-party Python dependency.
+
+**Without Rust** (`bash install.sh --no-rust`, or `cargo` absent): the
+clone + build are skipped and the install still succeeds — but the RTL
+features (`ingest-rtl`, `show`, `modules`) are unavailable. The
+waveform and X/Z sides work regardless.
+
+Two environment knobs control the parser checkout:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `XEZIM_CORE_REPO` | `https://github.com/aionhw/xezim-core.git` | git URL to clone |
+| `XEZIM_CORE_REF`  | `main` | branch / tag / SHA to check out |
+
+`xevdb` finds the built binary at
+`./xezim-core/xezim-parser/target/release/sv-parse`; override with the
+`XEVDB_SV_PARSE` environment variable to point at a parser elsewhere.
 
 ## Quick start
 
@@ -279,7 +307,7 @@ CREATE TABLE cache   (key PK, prompt_name, args_json, result_json,
 | Package | Scope | AI? | Rust? |
 | --- | --- | --- | --- |
 | **vcdb** | VCD-only DB + prompts + cache | No | No |
-| **xevdb** | VCD + SV (this package) — adds code display | No | Yes (vendored sv-parse) |
+| **xevdb** | VCD + SV (this package) — adds code display | No | Yes (sv-parse, cloned at install) |
 | **trudbg** | VCD + SV + log corpus + Claude rerank + Code subagent | Yes | Yes |
 
 `vcdb` is the right tool when you only have waveforms. `xevdb` adds RTL.
