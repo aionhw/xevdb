@@ -18,8 +18,7 @@
 #
 # Environment:
 #   XEZIM_CORE_REPO  git URL of xezim-core   (default: the aionhw HTTPS repo)
-#   XEZIM_CORE_REF   branch/tag/sha to check out (default: xevdb-json — the
-#                    branch whose sv-parse CLI matches xevdb's sv.py)
+#   XEZIM_CORE_REF   branch/tag/sha to check out (default: main)
 
 set -euo pipefail
 
@@ -59,12 +58,10 @@ err()  { printf '  %s✗%s  %s\n'    "$RED" "$RST" "$*"; }
 # ----- 1. prereqs ----------------------------------------------------------
 hr "1/5  prerequisites"
 
-# xevdb's sv.py drives `sv-parse --dump-json`. That flag lives on the
-# `xevdb-json` branch of xezim-core (the `main` branch reworked the CLI
-# and dropped it). Override XEZIM_CORE_REF to track a different ref once
-# sv.py is updated for it.
+# xevdb's sv.py drives `sv-parse --dump-json`, provided by the
+# `json-cli` cargo feature (on by default) of xezim-core's main branch.
 XEZIM_CORE_REPO="${XEZIM_CORE_REPO:-https://github.com/aionhw/xezim-core.git}"
-XEZIM_CORE_REF="${XEZIM_CORE_REF:-xevdb-json}"
+XEZIM_CORE_REF="${XEZIM_CORE_REF:-main}"
 
 PY=""
 for cand in python3.13 python3.12 python3.11 python3.10 python3 python; do
