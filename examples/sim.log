@@ -1,0 +1,17 @@
+UVM_INFO @ 0: reporter [RNTST] Running test picorv32_smoke (testbench.v)
+UVM_INFO testbench.v:120 reset asserted (resetn=0)
+UVM_INFO testbench.v:122 reset deasserted at t=200ns; expecting first instruction fetch
+UVM_INFO picorv32.v:380 mem_la_read asserted; reg_next_pc=0x00000000
+UVM_WARNING testbench.v:185 same fetch address observed twice: 0x00000000 (mem_la_addr)
+UVM_WARNING testbench.v:185 same fetch address observed three times: 0x00000000 (mem_la_addr)
+UVM_ERROR testbench.v:185 fetch wedge: mem_la_read=1, reg_pc=0x00000000 unchanged across 100 cycles
+UVM_ERROR picorv32.v:176 reg_pc stuck at 0x00000000; expected advance to 0x00000004 after first ack
+UVM_ERROR picorv32.v:547 mem-state assertion expected mem_do_rinst with !mem_do_rdata but observed mem_do_prefetch=0, mem_do_rinst=0
+UVM_WARNING picorv32.v:103 mem_la_read held high without corresponding mem_ready ack from testbench memory
+Assertion failed: cpu_pc_advanced — reg_pc must change within 50 cycles of resetn deassert
+read   0x00000000: 0x3fc00093
+read   0x00000000: 0x3fc00093
+read   0x00000000: 0x3fc00093
+UVM_FATAL testbench.v:210 cpu hung: 500 cycles since reset, pc still 0x00000000, trap=0
+UVM_INFO picorv32.v:91 trap output observed low for entire run (no illegal instruction trapped)
+ERROR simulation aborted due to UVM_FATAL

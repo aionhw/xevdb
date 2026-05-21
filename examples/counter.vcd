@@ -1,0 +1,42 @@
+$date Tue May 14 12:00:00 2026 $end
+$version trudbg-fixture 0.1 $end
+$timescale 1ns $end
+$scope module top $end
+$var wire 1 ! clk $end
+$var wire 1 " rst $end
+$var wire 1 # en $end
+$var reg 8 $ count [7:0] $end
+$scope module u_cnt $end
+$var wire 1 ! clk $end
+$var wire 1 " rst $end
+$var wire 1 # en $end
+$var reg 8 $ count [7:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$dumpvars
+0!
+1"
+1#
+b00000000 $
+$end
+#5
+1!
+#10
+0!
+0"
+#15
+1!
+b00000001 $
+#20
+0!
+#25
+1!
+b00000010 $
+#30
+0!
+#35
+1!
+b00000011 $
+#40
+0!

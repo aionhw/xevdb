@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xevdb"
+version = "0.1.0"
+description = "VCD + SystemVerilog → single SQLite file. Query signal values, show source code, run stored prompts, cache results. No AI."
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["vcd", "systemverilog", "rtl", "waveform", "verification", "hdl", "eda", "sqlite"]
+authors = [{ name = "xevdb authors" }]
+dependencies = [
+    "click>=8.1",
+]
+
+[project.optional-dependencies]
+duckdb = ["duckdb>=1.0", "pyarrow>=15"]
+dev    = ["pytest>=8", "ruff>=0.5"]
+
+[project.scripts]
+xevdb = "xevdb.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+
+# Installer scratch
+.install-pip.log
+.install-cargo.log
+
+# Rust build artifacts (vendored)
+xezim-core/**/target/
+
+# Generated demo artifacts
+demos/**/*.xevdb
+examples/*.xevdb
