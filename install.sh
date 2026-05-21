@@ -1,19 +1,25 @@
 #!/usr/bin/env bash
 # xevdb — standalone installer
 #
-# Sets up a Python venv, pip-installs xevdb editable, builds the vendored
-# SystemVerilog parser (sv-parse), and smoke-tests the full pipeline against
-# examples/{counter.vcd, counter.sv}. Zero AI dependencies.
+# Sets up a Python venv, pip-installs xevdb editable, clones + builds the
+# SystemVerilog parser (sv-parse) from the aionhw/xezim-core repo, and
+# smoke-tests the full pipeline against examples/{counter.vcd, counter.sv}.
+# Zero AI dependencies.
 #
-# Idempotent.
+# Idempotent. The xezim-core checkout is refreshed (git pull) on re-run.
 #
 # Usage:
 #   bash install.sh                  # default
 #   bash install.sh --no-smoke
-#   bash install.sh --no-rust        # skip cargo build (RTL features unavailable)
+#   bash install.sh --no-rust        # skip clone+build (RTL features unavailable)
 #   bash install.sh --recreate-venv
 #   bash install.sh --with-duckdb
 #   bash install.sh --help
+#
+# Environment:
+#   XEZIM_CORE_REPO  git URL of xezim-core   (default: the aionhw HTTPS repo)
+#   XEZIM_CORE_REF   branch/tag/sha to check out (default: xevdb-json — the
+#                    branch whose sv-parse CLI matches xevdb's sv.py)
 
 set -euo pipefail
 
@@ -29,7 +35,7 @@ for arg in "$@"; do
         --recreate-venv)  RECREATE=1 ;;
         --with-duckdb)    EXTRAS="[duckdb]" ;;
         -h|--help)
-            sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//'
+            sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'
             exit 0 ;;
         *)
             echo "unknown flag: $arg" >&2
@@ -51,7 +57,14 @@ warn() { printf '  %s!%s  %s\n'    "$YEL" "$RST" "$*"; }
 err()  { printf '  %s✗%s  %s\n'    "$RED" "$RST" "$*"; }
 
 # ----- 1. prereqs ----------------------------------------------------------
-hr "1/4  prerequisites"
+hr "1/5  prerequisites"
+
+# xevdb's sv.py drives `sv-parse --dump-json`. That flag lives on the
+# `xevdb-json` branch of xezim-core (the `main` branch reworked the CLI
+# and dropped it). Override XEZIM_CORE_REF to track a different ref once
+# sv.py is updated for it.
+XEZIM_CORE_REPO="${XEZIM_CORE_REPO:-https://github.com/aionhw/xezim-core.git}"
+XEZIM_CORE_REF="${XEZIM_CORE_REF:-xevdb-json}"
 
 PY=""
 for cand in python3.13 python3.12 python3.11 python3.10 python3 python; do
@@ -74,8 +87,17 @@ else
     BUILD_RUST=0
 fi
 
+if [[ "$BUILD_RUST" -eq 1 ]]; then
+    if command -v git >/dev/null 2>&1; then
+        ok "git: $(git --version 2>&1 | head -1)"
+    else
+        warn "git not found — cannot clone xezim-core; RTL features disabled"
+        BUILD_RUST=0
+    fi
+fi
+
 # ----- 2. Python venv + install -------------------------------------------
-hr "2/4  Python venv + pip install"
+hr "2/5  Python venv + pip install"
 
 VENV="$REPO/.venv"
 if [[ -d "$VENV" && "$RECREATE" -eq 1 ]]; then rm -rf "$VENV"; fi
@@ -95,8 +117,42 @@ fi
 
 command -v xevdb >/dev/null || { err "xevdb console script missing"; exit 1; }
 
-# ----- 3. cargo build sv-parse --------------------------------------------
-hr "3/4  SystemVerilog parser (sv-parse)"
+# ----- 3. clone / update xezim-core ---------------------------------------
+hr "3/5  xezim-core (SystemVerilog parser source)"
+
+XC_DIR="$REPO/xezim-core"
+if [[ "$BUILD_RUST" -eq 1 ]]; then
+    if [[ -d "$XC_DIR/.git" ]]; then
+        if (cd "$XC_DIR" && git fetch --quiet origin \
+            && git checkout --quiet "$XEZIM_CORE_REF" \
+            && git pull --quiet --ff-only origin "$XEZIM_CORE_REF" 2>/dev/null); then
+            ok "xezim-core updated → $(cd "$XC_DIR" && git rev-parse --short HEAD)"
+        else
+            # Detached tag/sha, or pull not fast-forwardable — checkout is
+            # still valid, just not advanceable. Not fatal.
+            warn "xezim-core: could not fast-forward $XEZIM_CORE_REF (using current checkout)"
+        fi
+    else
+        # Stale non-git directory (e.g. an old vendored copy) — replace it.
+        [[ -e "$XC_DIR" ]] && rm -rf "$XC_DIR"
+        if git clone --quiet --branch "$XEZIM_CORE_REF" \
+               "$XEZIM_CORE_REPO" "$XC_DIR" 2>/dev/null \
+           || git clone --quiet "$XEZIM_CORE_REPO" "$XC_DIR"; then
+            # Second form (no --branch) covers refs that are a sha, not a
+            # branch/tag; check it out explicitly afterwards.
+            (cd "$XC_DIR" && git checkout --quiet "$XEZIM_CORE_REF" 2>/dev/null) || true
+            ok "xezim-core cloned → $(cd "$XC_DIR" && git rev-parse --short HEAD)"
+        else
+            err "failed to clone xezim-core from $XEZIM_CORE_REPO"
+            exit 1
+        fi
+    fi
+else
+    printf '  %s·%s  skipped (Rust toolchain unavailable)\n' "$DIM" "$RST"
+fi
+
+# ----- 4. cargo build sv-parse --------------------------------------------
+hr "4/5  build SystemVerilog parser (sv-parse)"
 
 SV_PARSE="$REPO/xezim-core/xezim-parser/target/release/sv-parse"
 if [[ "$BUILD_RUST" -eq 1 ]]; then
@@ -120,8 +176,8 @@ else
     warn "sv-parse not built (RTL features disabled)"
 fi
 
-# ----- 4. smoke test -------------------------------------------------------
-hr "4/4  smoke test"
+# ----- 5. smoke test -------------------------------------------------------
+hr "5/5  smoke test"
 
 if [[ "$SMOKE" -eq 0 ]]; then
     printf '  %s·%s  skipped (--no-smoke)\n' "$DIM" "$RST"

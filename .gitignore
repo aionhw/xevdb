@@ -12,8 +12,8 @@ dist/
 .install-pip.log
 .install-cargo.log
 
-# Rust build artifacts (vendored)
-xezim-core/**/target/
+# xezim-core SystemVerilog parser — cloned by install.sh, not vendored.
+xezim-core/
 
 # Generated demo artifacts
 demos/**/*.xevdb
