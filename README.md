@@ -4,6 +4,9 @@
 source code, run stored SQL "prompts", cache results — all in one
 self-contained `.xevdb` file. Zero AI dependencies.
 
+> **New here?** Start with **[INTRODUCTION.md](INTRODUCTION.md)** — a guided tour
+> from a single waveform up to AI-assisted FPGA debug.
+
 Combines `vcdb` (waveform ingest) with the `xezim-parser` Rust
 SystemVerilog parser (cloned + built by `install.sh`) so the same
 `.xevdb` file holds:
@@ -75,16 +78,16 @@ Two environment knobs control the parser checkout:
 ### Tiny fixture (4 signals, 2 modules)
 
 ```sh
-xevdb build       examples/counter.vcd
-xevdb ingest-rtl  examples/counter.vcd.xevdb  examples/
+xevdb build       examples/simple/counter.vcd
+xevdb ingest-rtl  examples/simple/counter.vcd.xevdb  examples/simple/
 
 # Waveform side
-xevdb at     examples/counter.vcd.xevdb  top.u_cnt.count --time 25
+xevdb at     examples/simple/counter.vcd.xevdb  top.u_cnt.count --time 25
 # top.u_cnt.count   @25   last_t=25   value=00000010
 
 # RTL side: show the module header that declares it.
-xevdb show   examples/counter.vcd.xevdb  counter
-# == module counter @ examples/counter.sv:3-19  (kind=module ports=4 params=1 always=1 …) ==
+xevdb show   examples/simple/counter.vcd.xevdb  counter
+# == module counter @ examples/simple/counter.sv:3-19  (kind=module ports=4 params=1 always=1 …) ==
 #        1  // 8-bit synchronous counter with synchronous active-high reset.
 #        2  // Used as a trudbg smoke-test target.
 # >>     3  module counter #(
@@ -92,11 +95,11 @@ xevdb show   examples/counter.vcd.xevdb  counter
 # …
 
 # Or show the whole module body.
-xevdb show   examples/counter.vcd.xevdb  counter --full
+xevdb show   examples/simple/counter.vcd.xevdb  counter --full
 
 # Or look up a single signal by bare name.
-xevdb show   examples/counter.vcd.xevdb  en
-# == logic  en in module top @ examples/counter.sv:27 ==
+xevdb show   examples/simple/counter.vcd.xevdb  en
+# == logic  en in module top @ examples/simple/counter.sv:27 ==
 # >>    27      logic en;
 # …
 ```
@@ -202,7 +205,7 @@ is plain SQLite.
 `xevdb show` accepts:
 - a module name (`counter`) — shows the declaration header (or body with `--full`)
 - a signal or port name (`reg_pc`, `clk`) — finds the owning module(s)
-- a `file:line` (`examples/counter.sv:14`) — shows a context window
+- a `file:line` (`examples/simple/counter.sv:14`) — shows a context window
 
 All code is sliced from the `source_files` table inside the `.xevdb`. The
 original `.sv` files do not need to be on disk at query time.

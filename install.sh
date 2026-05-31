@@ -3,7 +3,7 @@
 #
 # Sets up a Python venv, pip-installs xevdb editable, clones + builds the
 # SystemVerilog parser (sv-parse) from the aionhw/xezim-core repo, and
-# smoke-tests the full pipeline against examples/{counter.vcd, counter.sv}.
+# smoke-tests the full pipeline against examples/simple/{counter.vcd, counter.sv}.
 # Zero AI dependencies.
 #
 # Idempotent. The xezim-core checkout is refreshed (git pull) on re-run.
@@ -189,7 +189,7 @@ else
     trap 'rm -f "$DB"' EXIT
     FAIL=0
 
-    xevdb build "$REPO/examples/counter.vcd" --db "$DB" --reset >/dev/null \
+    xevdb build "$REPO/examples/simple/counter.vcd" --db "$DB" --reset >/dev/null \
         || { err "xevdb build failed"; FAIL=1; }
 
     VAL=$(xevdb at "$DB" top.u_cnt.count --time 25 --json 2>/dev/null \
@@ -208,7 +208,7 @@ else
     fi
 
     if [[ -x "$SV_PARSE" ]]; then
-        if xevdb ingest-rtl "$DB" "$REPO/examples/counter.sv" --reset >/dev/null 2>&1; then
+        if xevdb ingest-rtl "$DB" "$REPO/examples/simple/counter.sv" --reset >/dev/null 2>&1; then
             ok "RTL ingest: counter.sv"
         else
             err "RTL ingest failed"; FAIL=1
@@ -250,7 +250,7 @@ CLIs:
   ${BOLD}xevdb cache${RST}        {stats, list, clear}
 
 next:
-  xevdb build       examples/counter.vcd
-  xevdb ingest-rtl  examples/counter.vcd.xevdb examples/
-  xevdb show        examples/counter.vcd.xevdb counter
+  xevdb build       examples/simple/counter.vcd
+  xevdb ingest-rtl  examples/simple/counter.vcd.xevdb examples/simple/
+  xevdb show        examples/simple/counter.vcd.xevdb counter
 EOF

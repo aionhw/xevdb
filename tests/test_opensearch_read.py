@@ -20,7 +20,7 @@ from xevdb.backends import opensearch_backend as osb                 # noqa: E40
 from xevdb.backends import opensearch_schema as schema               # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
-VCD = REPO / "examples" / "counter.vcd"
+VCD = REPO / "examples" / "simple" / "counter.vcd"
 
 
 # ---------------- query evaluator ----------------

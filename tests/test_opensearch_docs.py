@@ -11,9 +11,9 @@ from xevdb.backends import opensearch_docs as docs
 
 
 REPO = Path(__file__).resolve().parents[1]
-VCD = REPO / "examples" / "counter.vcd"
-SV = REPO / "examples" / "counter.sv"
-SIM_LOG = REPO / "examples" / "sim.log"
+VCD = REPO / "examples" / "simple" / "counter.vcd"
+SV = REPO / "examples" / "simple" / "counter.sv"
+SIM_LOG = REPO / "examples" / "simple" / "sim.log"
 
 
 def _by_table(actions):

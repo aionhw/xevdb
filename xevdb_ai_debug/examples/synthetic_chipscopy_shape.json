@@ -1,0 +1,6 @@
+{
+  "__SAMPLE_INDEX": [0, 1, 2, 3],
+  "__TRIGGER": [0, 0, 1, 0],
+  "s_axi_awvalid": [0, 1, 1, 0],
+  "s_axi_awready": [0, 0, 1, 0]
+}

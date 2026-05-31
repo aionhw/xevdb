@@ -9,7 +9,7 @@ from xevdb import db, bugs, backends
 
 
 REPO = Path(__file__).resolve().parents[1]
-VCD = REPO / "examples" / "counter.vcd"
+VCD = REPO / "examples" / "simple" / "counter.vcd"
 
 
 @pytest.fixture

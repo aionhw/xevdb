@@ -59,8 +59,8 @@ xevdb --help
 Everything starts with `build`:
 
 ```sh
-xevdb build examples/counter.vcd
-# → writes examples/counter.vcd.xevdb
+xevdb build examples/simple/counter.vcd
+# → writes examples/simple/counter.vcd.xevdb
 ```
 
 `build` parses the VCD's signal definitions and every value change, then
@@ -73,8 +73,8 @@ seeds a library of ~20 stored query prompts. Useful flags:
 Check what landed:
 
 ```sh
-xevdb stats examples/counter.vcd.xevdb
-# source        examples/counter.vcd
+xevdb stats examples/simple/counter.vcd.xevdb
+# source        examples/simple/counter.vcd
 # timescale     1ns
 # n_signals     4
 # n_changes     16
@@ -140,7 +140,7 @@ Waveform values gain meaning when joined to the source that produced
 them. `ingest-rtl` parses `.v` / `.sv` files into the same database:
 
 ```sh
-xevdb ingest-rtl counter.vcd.xevdb examples/        # a dir, or a single file
+xevdb ingest-rtl counter.vcd.xevdb examples/simple/        # a dir, or a single file
 ```
 
 It stores parsed modules/ports/signals/instances **and the full source
@@ -153,7 +153,7 @@ xevdb modules counter.vcd.xevdb --filter cnt        # name filter
 xevdb show counter.vcd.xevdb counter                # module header
 xevdb show counter.vcd.xevdb counter --full         # whole body
 xevdb show counter.vcd.xevdb en                     # a signal → owning module
-xevdb show counter.vcd.xevdb examples/counter.sv:14 # a file:line window
+xevdb show counter.vcd.xevdb examples/simple/counter.sv:14 # a file:line window
 ```
 
 `xevdb show` slices code straight out of the `source_files` table — the

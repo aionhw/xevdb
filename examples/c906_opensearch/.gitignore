@@ -1,0 +1,7 @@
+# generated artifacts (reproduce with run_tutorial.sh)
+*.vcd
+*.vcd.known
+*.simlog
+*.log
+*.xevdb
+rtl/

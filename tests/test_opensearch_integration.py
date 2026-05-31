@@ -22,7 +22,7 @@ pytestmark = pytest.mark.skipif(
 pytest.importorskip("opensearchpy")
 
 REPO = Path(__file__).resolve().parents[1]
-VCD = REPO / "examples" / "counter.vcd"
+VCD = REPO / "examples" / "simple" / "counter.vcd"
 
 
 def test_live_build_query_and_bug_roundtrip(tmp_path, monkeypatch):

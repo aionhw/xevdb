@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xevdb AI Debug Dashboard</title>
+  <style>
+    :root { --bg:#0f172a; --panel:#111827; --card:#1e293b; --muted:#94a3b8; --text:#e5e7eb; --accent:#38bdf8; --warn:#f59e0b; --crit:#ef4444; --ok:#22c55e; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, Segoe UI, Arial, sans-serif; background:linear-gradient(135deg,#0f172a,#111827); color:var(--text); }
+    header { display:flex; justify-content:space-between; align-items:center; padding:22px 28px; border-bottom:1px solid rgba(255,255,255,.08); background:rgba(15,23,42,.75); position:sticky; top:0; backdrop-filter:blur(12px); }
+    h1 { margin:0; font-size:24px; letter-spacing:-.02em; }
+    .sub { color:var(--muted); font-size:13px; margin-top:4px; }
+    .pill { padding:7px 11px; border:1px solid rgba(255,255,255,.14); border-radius:999px; color:#cbd5e1; font-size:12px; display:inline-flex; gap:6px; align-items:center; }
+    main { padding:26px; max-width:1420px; margin:auto; }
+    .grid { display:grid; gap:16px; }
+    .metrics { grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .two { grid-template-columns:2fr 1fr; margin-top:16px; }
+    .card { background:rgba(30,41,59,.88); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:18px; box-shadow:0 20px 45px rgba(0,0,0,.18); }
+    .metric-title { color:var(--muted); font-size:13px; }
+    .metric-value { font-size:32px; font-weight:700; margin:8px 0 2px; }
+    .metric-sub { color:var(--muted); font-size:12px; }
+    .section-title { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .section-title h2 { margin:0; font-size:18px; }
+    table { width:100%; border-collapse:collapse; overflow:hidden; border-radius:14px; }
+    th,td { padding:12px 10px; text-align:left; border-bottom:1px solid rgba(255,255,255,.08); font-size:13px; }
+    th { color:#94a3b8; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.08em; }
+    .status { padding:5px 8px; border-radius:999px; font-size:12px; font-weight:600; }
+    .critical { background:rgba(239,68,68,.16); color:#fecaca; }
+    .warning { background:rgba(245,158,11,.16); color:#fde68a; }
+    .healthy { background:rgba(34,197,94,.16); color:#bbf7d0; }
+    .bars { display:flex; gap:8px; align-items:end; min-height:180px; padding:14px 4px 2px; }
+    .bar { flex:1; border-radius:12px 12px 4px 4px; background:linear-gradient(180deg,#38bdf8,#2563eb); min-height:18px; position:relative; }
+    .bar span { position:absolute; bottom:-22px; left:50%; transform:translateX(-50%); color:var(--muted); font-size:11px; white-space:nowrap; }
+    .events { margin-top:16px; grid-template-columns:1fr 1fr; }
+    .event { padding:13px; border-radius:14px; background:rgba(15,23,42,.65); border:1px solid rgba(255,255,255,.08); margin-bottom:10px; }
+    .event strong { display:block; margin-bottom:5px; }
+    .event small { color:var(--muted); }
+    .chat { display:flex; gap:8px; margin-top:12px; }
+    input { flex:1; border:none; border-radius:12px; padding:12px 14px; background:#0f172a; color:var(--text); outline:1px solid rgba(255,255,255,.08); }
+    button { border:none; border-radius:12px; padding:12px 14px; background:#38bdf8; color:#082f49; font-weight:700; cursor:pointer; }
+    pre { white-space:pre-wrap; background:#0f172a; color:#d1d5db; padding:14px; border-radius:14px; min-height:160px; line-height:1.45; border:1px solid rgba(255,255,255,.08); }
+    @media(max-width:900px){ .metrics,.two,.events { grid-template-columns:1fr; } header{align-items:flex-start; flex-direction:column; gap:12px;} }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>xevdb AI Debug Dashboard</h1>
+      <div class="sub">XTrace-backed observability for AMD/Xilinx FPGA hardware debug sessions</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span class="pill">Local Mode</span><span class="pill">Policy Gateway</span><span class="pill">Codex Connector</span>
+    </div>
+  </header>
+  <main>
+    <div class="grid metrics">
+      <div class="card"><div class="metric-title">Trace Samples Indexed</div><div class="metric-value" id="m-samples">—</div><div class="metric-sub">from xevdb sessions</div></div>
+      <div class="card"><div class="metric-title">Protocol Events</div><div class="metric-value" id="m-events">—</div><div class="metric-sub">AXI / AXIS stalls</div></div>
+      <div class="card"><div class="metric-title">Active Sessions</div><div class="metric-value" id="m-sessions">—</div><div class="metric-sub">JSON state + xevdb backend</div></div>
+      <div class="card"><div class="metric-title">AI Debug Mode</div><div class="metric-value">Codex</div><div class="metric-sub">Codex CLI, xevdb tools</div></div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <div class="section-title"><h2>Debug Sessions</h2><span class="pill">API: /sessions</span></div>
+        <table>
+          <thead><tr><th>Session</th><th>Project</th><th>Board</th><th>Source</th><th>Status</th></tr></thead>
+          <tbody id="sessions"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="section-title"><h2>Event Distribution</h2><span class="pill">sample</span></div>
+        <div class="bars" id="bars"></div>
+      </div>
+    </div>
+
+    <div class="grid events">
+      <div class="card">
+        <div class="section-title"><h2>Protocol Events</h2><span class="pill">first 10</span></div>
+        <div id="events"></div>
+      </div>
+      <div class="card">
+        <div class="section-title"><h2>Codex-style Debug Console</h2><span class="pill">xevdb context only</span></div>
+        <div class="chat"><input id="question" value="Why did AXI write hang?" /><button onclick="ask()">Ask</button></div>
+        <pre id="answer">Select/ingest a session, then ask a debug question.</pre>
+      </div>
+    </div>
+  </main>
+
+<script>
+const API = localStorage.getItem('xevdb_api') || 'http://localhost:8080';
+let currentSession = null;
+async function j(path, opts){ const r = await fetch(API+path, opts); if(!r.ok) throw new Error(await r.text()); return r.json(); }
+function statusFor(events){ if(events.some(e=>e.severity==='critical')) return ['Critical','critical']; if(events.length) return ['Warning','warning']; return ['Healthy','healthy']; }
+async function load(){
+  try{
+    const sessions = await j('/sessions');
+    document.getElementById('m-sessions').textContent = sessions.length;
+    const tbody = document.getElementById('sessions'); tbody.innerHTML='';
+    let totalEvents=0,totalSamples=0, eventBuckets={};
+    for (const s of sessions){
+      const sum = await j(`/sessions/${s.session_id}/summary`);
+      const ev = await j(`/sessions/${s.session_id}/events`);
+      totalEvents += ev.length; totalSamples += sum.sample_count || 0;
+      ev.forEach(e=> eventBuckets[e.channel]=(eventBuckets[e.channel]||0)+1);
+      const [label,cls]=statusFor(ev);
+      const tr=document.createElement('tr'); tr.style.cursor='pointer'; tr.onclick=()=>select(s.session_id);
+      tr.innerHTML=`<td><b>${s.session_id}</b></td><td>${s.project}</td><td>${s.board}</td><td>${s.source}</td><td><span class="status ${cls}">${label}</span></td>`;
+      tbody.appendChild(tr);
+    }
+    document.getElementById('m-events').textContent = totalEvents;
+    document.getElementById('m-samples').textContent = totalSamples.toLocaleString();
+    renderBars(eventBuckets);
+    if(sessions[0]) select(sessions[0].session_id);
+  } catch(e) {
+    document.getElementById('answer').textContent = 'API not reachable. Start it with: uvicorn api:app --reload --port 8080\n\n' + e;
+  }
+}
+function renderBars(buckets){
+  const el=document.getElementById('bars'); el.innerHTML='';
+  const entries=Object.entries(buckets); const max=Math.max(1,...entries.map(e=>e[1]));
+  for(const [name,val] of entries){ const d=document.createElement('div'); d.className='bar'; d.style.height=(40+140*val/max)+'px'; d.innerHTML=`<span>${name} ${val}</span>`; el.appendChild(d); }
+}
+async function select(id){
+  currentSession=id;
+  const ev=await j(`/sessions/${id}/events`);
+  const el=document.getElementById('events'); el.innerHTML='';
+  ev.slice(0,10).forEach(e=>{ const d=document.createElement('div'); d.className='event'; d.innerHTML=`<strong>${e.event_type} / ${e.channel}</strong><small>samples ${e.start_sample}-${e.end_sample}, ${e.cycles} cycles, ${e.severity}</small><div>${e.reason}</div>`; el.appendChild(d); });
+}
+async function ask(){
+  if(!currentSession){ document.getElementById('answer').textContent='No session selected.'; return; }
+  const question=document.getElementById('question').value;
+  const res=await j(`/sessions/${currentSession}/ask`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question})});
+  document.getElementById('answer').textContent=res.answer;
+}
+load();
+</script>
+</body>
+</html>

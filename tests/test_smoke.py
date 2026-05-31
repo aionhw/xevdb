@@ -1,4 +1,4 @@
-"""End-to-end smoke for VCD + RTL pipeline against examples/counter.{vcd,sv}.
+"""End-to-end smoke for VCD + RTL pipeline against examples/simple/counter.{vcd,sv}.
 
 Run with: pytest tests/ -v
 """
@@ -12,8 +12,8 @@ from xevdb import db, prompts, cache, show, sv
 
 
 REPO = Path(__file__).resolve().parents[1]
-VCD = REPO / "examples" / "counter.vcd"
-SV = REPO / "examples" / "counter.sv"
+VCD = REPO / "examples" / "simple" / "counter.vcd"
+SV = REPO / "examples" / "simple" / "counter.sv"
 
 
 # ---------------- VCD-side ----------------
@@ -140,7 +140,7 @@ def test_prompt_list_modules_and_cache(xevdb_with_rtl):
 # ---------------- Sim-side ----------------
 
 from xevdb import sim                                                # noqa: E402
-SIM_LOG = REPO / "examples" / "sim.log"
+SIM_LOG = REPO / "examples" / "simple" / "sim.log"
 
 
 def test_sim_parser_extracts_severity_time_ref():
