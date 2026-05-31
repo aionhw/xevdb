@@ -30,6 +30,10 @@ class SqliteBackend(Backend):
               seed: bool = True) -> dict[str, int]:
         return _db.build(vcd_path, self.db_path, reset=reset, seed=seed)
 
+    def build_xtrace(self, xtrace_path: str | Path, *, reset: bool = False,
+                     seed: bool = True) -> dict[str, int]:
+        return _db.build_xtrace(xtrace_path, self.db_path, reset=reset, seed=seed)
+
     def ingest_rtl(self, rtl_path: str | Path, *,
                    reset: bool = False) -> dict[str, int]:
         return _db.ingest_rtl(rtl_path, self.db_path, reset=reset)

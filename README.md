@@ -119,6 +119,7 @@ the core's source straight from the database. See
 
 ```
 xevdb build  <vcd> [--db out.xevdb] [--reset] [--no-seed]
+xevdb build-xtrace <xtrace> [--db out.xevdb] [--reset] [--no-seed]
 xevdb at     <db> <signal> --time <t>           [--json]
 xevdb window <db> <signal> --from <t0> --to <t1> [--limit N] [--json]
 xevdb find   <db> <pattern>                      [--limit N] [--json]

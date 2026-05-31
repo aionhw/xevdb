@@ -36,6 +36,7 @@ from .parser import VCD, bare_name, parse_file
 from . import seed_prompts
 from . import sv as _sv
 from . import sim as _sim
+from . import xtrace as _xtrace
 
 
 # ----------------------------------------------------------------------------
@@ -290,7 +291,38 @@ def build(
     if reset and db_path.exists():
         db_path.unlink()
 
-    vcd = parse_file(vcd_path)
+    return build_vcd(parse_file(vcd_path), db_path, source_path=vcd_path, reset=reset, seed=seed)
+
+
+def build_xtrace(
+    xtrace_path: str | Path,
+    db_path: str | Path,
+    reset: bool = False,
+    seed: bool = True,
+) -> dict[str, int]:
+    """Parse an XTrace capture into a fresh .xevdb file."""
+    return build_vcd(
+        _xtrace.parse_file(xtrace_path),
+        db_path,
+        source_path=xtrace_path,
+        reset=reset,
+        seed=seed,
+    )
+
+
+def build_vcd(
+    vcd: VCD,
+    db_path: str | Path,
+    *,
+    source_path: str | Path,
+    reset: bool = False,
+    seed: bool = True,
+) -> dict[str, int]:
+    """Write a parsed waveform object into a .xevdb file."""
+    db_path = Path(db_path)
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    if reset and db_path.exists():
+        db_path.unlink()
 
     con = sqlite3.connect(db_path)
     try:
@@ -317,7 +349,7 @@ def build(
         t_min = min((c.t for c in vcd.changes), default=0)
         t_max = max((c.t for c in vcd.changes), default=0)
         meta_rows = [
-            ("source", str(vcd_path)),
+            ("source", str(source_path)),
             ("date", vcd.date),
             ("version", vcd.version),
             ("timescale", vcd.timescale),

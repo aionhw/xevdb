@@ -2,6 +2,7 @@
 
 Direct queries:
     xevdb build  <vcd>                          # parse VCD → .xevdb file
+    xevdb build-xtrace <xtrace>                 # parse XTrace → .xevdb file
     xevdb at     <db> <signal> --time <t>
     xevdb window <db> <signal> --from <t0> --to <t1>
     xevdb find   <db> <pattern>
@@ -97,6 +98,24 @@ def build(vcd_path: str, db_path: str | None, reset: bool, no_seed: bool) -> Non
     result = _backend(db_path).build(vcd_path, reset=reset, seed=not no_seed)
     click.echo(
         f"built {db_path} from {vcd_path}: "
+        f"{result['signals']} signals, {result['changes']} changes, "
+        f"t in [{result['t_min']}, {result['t_max']}]"
+    )
+
+
+@main.command(name="build-xtrace")
+@click.argument("xtrace_path", type=click.Path(exists=True, dir_okay=False))
+@click.option("--db", "db_path", type=click.Path(),
+              help="Output database path. Default: <xtrace_path>.xevdb")
+@click.option("--reset", is_flag=True, help="Replace any existing database.")
+@click.option("--no-seed", is_flag=True, help="Skip installing the standard prompt library.")
+def build_xtrace(xtrace_path: str, db_path: str | None, reset: bool, no_seed: bool) -> None:
+    """Parse XTRACE_PATH and write a self-contained .xevdb file."""
+    if db_path is None:
+        db_path = _default_db_path(xtrace_path)
+    result = _backend(db_path).build_xtrace(xtrace_path, reset=reset, seed=not no_seed)
+    click.echo(
+        f"built {db_path} from {xtrace_path}: "
         f"{result['signals']} signals, {result['changes']} changes, "
         f"t in [{result['t_min']}, {result['t_max']}]"
     )

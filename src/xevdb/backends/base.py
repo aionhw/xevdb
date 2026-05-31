@@ -50,6 +50,11 @@ class Backend(ABC):
         """Parse a VCD into a fresh dataset. Returns ingest counts."""
 
     @abstractmethod
+    def build_xtrace(self, xtrace_path: str | Path, *, reset: bool = False,
+                     seed: bool = True) -> dict[str, int]:
+        """Parse an XTrace capture into a fresh dataset. Returns ingest counts."""
+
+    @abstractmethod
     def ingest_rtl(self, rtl_path: str | Path, *,
                    reset: bool = False) -> dict[str, int]:
         """Parse .v/.sv under `rtl_path` into the dataset."""

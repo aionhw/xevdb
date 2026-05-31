@@ -164,9 +164,21 @@ class OpenSearchBackend(Backend):
     def build(self, vcd_path: str | Path, *, reset: bool = False,
               seed: bool = True) -> dict[str, int]:
         from ..parser import parse_file
-        from .. import seed_prompts as _seed
 
         vcd = parse_file(vcd_path)
+        return self._build_waveform(vcd, source=str(vcd_path), reset=reset, seed=seed)
+
+    def build_xtrace(self, xtrace_path: str | Path, *, reset: bool = False,
+                     seed: bool = True) -> dict[str, int]:
+        from .. import xtrace as _xtrace
+
+        vcd = _xtrace.parse_file(xtrace_path)
+        return self._build_waveform(vcd, source=str(xtrace_path), reset=reset, seed=seed)
+
+    def _build_waveform(self, vcd, *, source: str, reset: bool,
+                        seed: bool) -> dict[str, int]:
+        from .. import seed_prompts as _seed
+
         ptr = self._pointer(create=True)
         client = self._client(ptr)
         try:
@@ -176,7 +188,7 @@ class OpenSearchBackend(Backend):
             self._reset_indices(
                 client, ptr, schema.TABLES if reset else schema.VCD_TABLES + ("meta",))
             self._ensure_indices(client, ptr)
-            actions = list(docs.vcd_actions(vcd, source=str(vcd_path)))
+            actions = list(docs.vcd_actions(vcd, source=source))
             if seed:
                 actions += list(docs.prompt_actions(_seed.PROMPTS, now=time.time()))
             self._bulk(client, ptr, actions)

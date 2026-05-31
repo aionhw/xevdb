@@ -8,6 +8,7 @@ artifact, no AI, all SQLite.
 from .parser import VCD, Signal, Change, parse, parse_file
 from .db import (
     build,
+    build_xtrace,
     ingest_rtl,
     ingest_sim,
     open_db,
@@ -24,7 +25,7 @@ from .bugs import add_bug, get_bug, list_bugs, remove_bug, search_bugs
 __version__ = "0.1.0"
 __all__ = [
     "VCD", "Signal", "Change", "parse", "parse_file",
-    "build", "ingest_rtl", "ingest_sim",
+    "build", "build_xtrace", "ingest_rtl", "ingest_sim",
     "open_db", "resolve_signal", "value_at", "window",
     "find_signals", "stats",
     "run_prompt", "list_prompts", "add_prompt", "remove_prompt", "show_prompt",
