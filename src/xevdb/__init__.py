@@ -19,6 +19,7 @@ from .db import (
 )
 from .prompts import run_prompt, list_prompts, add_prompt, remove_prompt, show_prompt
 from .show import show_code
+from .bugs import add_bug, get_bug, list_bugs, remove_bug, search_bugs
 
 __version__ = "0.1.0"
 __all__ = [
@@ -28,4 +29,5 @@ __all__ = [
     "find_signals", "stats",
     "run_prompt", "list_prompts", "add_prompt", "remove_prompt", "show_prompt",
     "show_code",
+    "add_bug", "get_bug", "list_bugs", "remove_bug", "search_bugs",
 ]

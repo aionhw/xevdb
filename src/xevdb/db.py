@@ -145,12 +145,38 @@ _SQLITE_SCHEMA = [
         message   TEXT NOT NULL
     )
     """,
+    # bug knowledge base
+    """
+    CREATE TABLE IF NOT EXISTS bugs (
+        name          TEXT PRIMARY KEY,
+        title         TEXT NOT NULL DEFAULT '',
+        status        TEXT NOT NULL DEFAULT 'open',
+        severity      TEXT NOT NULL DEFAULT '',
+        symptom       TEXT NOT NULL DEFAULT '',
+        root_cause    TEXT NOT NULL DEFAULT '',
+        fix           TEXT NOT NULL DEFAULT '',
+        fix_ref       TEXT NOT NULL DEFAULT '',
+        keywords_json TEXT NOT NULL DEFAULT '[]',
+        tags_json     TEXT NOT NULL DEFAULT '[]',
+        created_at    REAL NOT NULL,
+        updated_at    REAL NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS bug_links (
+        bug_name TEXT NOT NULL,
+        kind     TEXT NOT NULL,
+        value    TEXT NOT NULL,
+        extra    TEXT NOT NULL DEFAULT ''
+    )
+    """,
     # prompts + cache
     """
     CREATE TABLE IF NOT EXISTS prompts (
         name        TEXT PRIMARY KEY,
         description TEXT NOT NULL DEFAULT '',
         sql         TEXT NOT NULL,
+        dsl_json    TEXT NOT NULL DEFAULT '',
         params_json TEXT NOT NULL DEFAULT '[]',
         created_at  REAL NOT NULL,
         updated_at  REAL NOT NULL
@@ -184,12 +210,60 @@ _SQLITE_SCHEMA = [
     "CREATE INDEX IF NOT EXISTS idx_sim_events_t     ON sim_events(t)",
     "CREATE INDEX IF NOT EXISTS idx_sim_events_ref   ON sim_events(ref_file)",
     "CREATE INDEX IF NOT EXISTS idx_cache_prompt     ON cache(prompt_name)",
+    "CREATE INDEX IF NOT EXISTS idx_bugs_status      ON bugs(status)",
+    "CREATE INDEX IF NOT EXISTS idx_bugs_severity    ON bugs(severity)",
+    "CREATE INDEX IF NOT EXISTS idx_bug_links_name   ON bug_links(bug_name)",
+    "CREATE INDEX IF NOT EXISTS idx_bug_links_kv     ON bug_links(kind, value)",
 ]
+
+# Columns indexed by the bug full-text-search virtual table, in order. `name`
+# is UNINDEXED (stored, returned, filterable — but not tokenized/searched).
+BUG_FTS_COLUMNS = ("name", "title", "symptom", "root_cause", "fix", "keywords", "tags")
+
+
+def _ensure_bug_fts(con: sqlite3.Connection) -> bool:
+    """Create the bug FTS5 table if this SQLite was built with FTS5.
+
+    Returns True if the table exists afterwards. When FTS5 is unavailable the
+    bug search path falls back to LIKE, so this is best-effort.
+    """
+    try:
+        con.execute(
+            "CREATE VIRTUAL TABLE IF NOT EXISTS bugs_fts USING fts5("
+            "name UNINDEXED, title, symptom, root_cause, fix, keywords, tags)"
+        )
+        return True
+    except sqlite3.OperationalError:
+        return False  # FTS5 not compiled in
+
+
+def bug_fts_available(con: sqlite3.Connection) -> bool:
+    row = con.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='bugs_fts'"
+    ).fetchone()
+    return row is not None
+
+
+# Additive, idempotent column migrations for .xevdb files created by an older
+# xevdb.  Each entry is (table, column, "<type> <constraints>").  Applied only
+# when the column is absent, so re-running is a no-op.
+_COLUMN_MIGRATIONS = [
+    ("prompts", "dsl_json", "TEXT NOT NULL DEFAULT ''"),
+]
+
+
+def _migrate(con: sqlite3.Connection) -> None:
+    for table, column, decl in _COLUMN_MIGRATIONS:
+        cols = {r[1] for r in con.execute(f"PRAGMA table_info({table})")}
+        if column not in cols:
+            con.execute(f"ALTER TABLE {table} ADD COLUMN {column} {decl}")
 
 
 def _ensure_schema(con: sqlite3.Connection) -> None:
     for stmt in _SQLITE_SCHEMA:
         con.execute(stmt)
+    _ensure_bug_fts(con)
+    _migrate(con)
 
 
 def _fullname(hier: str, name: str) -> str:
@@ -472,6 +546,8 @@ def stats(con) -> dict[str, Any]:
         "module_instances": _exec(con, "SELECT COUNT(*) AS n FROM module_instances")[0]["n"],
         "sim_runs":         _exec(con, "SELECT COUNT(*) AS n FROM sim_runs")[0]["n"],
         "sim_events":       _exec(con, "SELECT COUNT(*) AS n FROM sim_events")[0]["n"],
+        "bugs":             _exec(con, "SELECT COUNT(*) AS n FROM bugs")[0]["n"],
+        "bug_links":        _exec(con, "SELECT COUNT(*) AS n FROM bug_links")[0]["n"],
         "prompts":          _exec(con, "SELECT COUNT(*) AS n FROM prompts")[0]["n"],
         "cache":            _exec(con, "SELECT COUNT(*) AS n FROM cache")[0]["n"],
     }

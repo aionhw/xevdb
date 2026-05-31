@@ -32,13 +32,47 @@ from . import cache as _cache
 from . import show as _show
 from . import sv as _sv
 from . import xztrace as _xz
+from . import bugs as _bugs
+from . import backends as _backends
+
+
+# Backend chosen for this invocation. Set by the `main` group callback from
+# --backend / $XEVDB_BACKEND; consumed by `_backend()`. None means "default".
+_BACKEND_NAME: str | None = None
+
+
+def _backend(db_path: str) -> _backends.Backend:
+    """The selected backend bound to `db_path`."""
+    try:
+        return _backends.get_backend(_BACKEND_NAME, db_path)
+    except ValueError as e:
+        raise click.ClickException(str(e))
+
+
+def _require_raw_sql(db_path: str, feature: str) -> None:
+    """Raise unless the selected backend supports raw-SQL features.
+
+    `modules`, `show`, and `xz` read via hand-written SQL over a DB-API
+    connection; on a document-store backend (OpenSearch) that connection is a
+    client, not a cursor, so these stay relational-only for now.
+    """
+    backend = _backend(db_path)
+    if not backend.supports_raw_sql:
+        raise click.ClickException(
+            f"`{feature}` is only available on a relational (sqlite) backend; "
+            f"the {backend.name!r} backend does not support it yet.")
 
 
 # ----------------------------------------------------------------------------
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.version_option(package_name="xevdb")
-def main() -> None:
+@click.option("--backend", "backend_name", default=None, metavar="NAME",
+              help="Storage backend (default: $XEVDB_BACKEND or 'sqlite'). "
+                   f"Available: {', '.join(_backends.available_backends())}.")
+def main(backend_name: str | None) -> None:
     """VCD + SystemVerilog database with stored prompts and a result cache."""
+    global _BACKEND_NAME
+    _BACKEND_NAME = backend_name
 
 
 # ----------------------------------------------------------------------------
@@ -60,7 +94,7 @@ def build(vcd_path: str, db_path: str | None, reset: bool, no_seed: bool) -> Non
     """Parse VCD_PATH and write a self-contained .xevdb file."""
     if db_path is None:
         db_path = _default_db_path(vcd_path)
-    result = _db.build(vcd_path, db_path, reset=reset, seed=not no_seed)
+    result = _backend(db_path).build(vcd_path, reset=reset, seed=not no_seed)
     click.echo(
         f"built {db_path} from {vcd_path}: "
         f"{result['signals']} signals, {result['changes']} changes, "
@@ -76,11 +110,12 @@ def build(vcd_path: str, db_path: str | None, reset: bool, no_seed: bool) -> Non
 @click.option("--json", "as_json", is_flag=True)
 def at(db_path: str, signal: str, t: int, as_json: bool) -> None:
     """Value of SIGNAL at time T (last change at-or-before t)."""
-    with _db.open_db(db_path, read_only=True) as con:
-        sig = _db.resolve_signal(con, signal)
+    backend = _backend(db_path)
+    with backend.open(read_only=True) as con:
+        sig = backend.resolve_signal(con, signal)
         if sig is None:
             raise click.ClickException(f"signal not found or ambiguous: {signal!r}")
-        result = _db.value_at(con, sig.sig_id, t)
+        result = backend.value_at(con, sig.sig_id, t)
         if result is None:
             if as_json:
                 click.echo(json.dumps({"signal": sig.fullname, "t": t, "value": None}))
@@ -107,11 +142,12 @@ def at(db_path: str, signal: str, t: int, as_json: bool) -> None:
 def window(db_path: str, signal: str, t0: int | None, t1: int | None,
            limit: int, as_json: bool) -> None:
     """All value changes of SIGNAL within a time window."""
-    with _db.open_db(db_path, read_only=True) as con:
-        sig = _db.resolve_signal(con, signal)
+    backend = _backend(db_path)
+    with backend.open(read_only=True) as con:
+        sig = backend.resolve_signal(con, signal)
         if sig is None:
             raise click.ClickException(f"signal not found or ambiguous: {signal!r}")
-        rows = _db.window(con, sig.sig_id, t0, t1, limit)
+        rows = backend.window(con, sig.sig_id, t0, t1, limit)
         if as_json:
             click.echo(json.dumps({
                 "signal": sig.fullname, "from": t0, "to": t1,
@@ -132,8 +168,9 @@ def window(db_path: str, signal: str, t0: int | None, t1: int | None,
 @click.option("--json", "as_json", is_flag=True)
 def find(db_path: str, pattern: str, limit: int, as_json: bool) -> None:
     """Glob (`*reg_pc*`) or substring search for signals."""
-    with _db.open_db(db_path, read_only=True) as con:
-        hits = _db.find_signals(con, pattern, limit)
+    backend = _backend(db_path)
+    with backend.open(read_only=True) as con:
+        hits = backend.find_signals(con, pattern, limit)
         if as_json:
             click.echo(json.dumps([
                 {"id": s.sig_id, "fullname": s.fullname, "width": s.width, "kind": s.kind}
@@ -152,8 +189,9 @@ def find(db_path: str, pattern: str, limit: int, as_json: bool) -> None:
 @click.option("--json", "as_json", is_flag=True)
 def stats(db_path: str, as_json: bool) -> None:
     """Database statistics: VCD + RTL counts, time range, source VCD."""
-    with _db.open_db(db_path, read_only=True) as con:
-        info = _db.stats(con)
+    backend = _backend(db_path)
+    with backend.open(read_only=True) as con:
+        info = backend.stats(con)
     if as_json:
         click.echo(json.dumps(info, indent=2))
         return
@@ -190,8 +228,8 @@ def ingest_sim_cmd(db_path: str, log_path: str, name: str | None,
     `@ 200:`, `[100]`, `# 100:`, `at 1500 ps`) and file:line refs are
     extracted into dedicated columns for indexed querying.
     """
-    result = _db.ingest_sim(log_path, db_path, name=name,
-                            keep_all=keep_all, reset=reset)
+    result = _backend(db_path).ingest_sim(log_path, name=name,
+                                          keep_all=keep_all, reset=reset)
     click.echo(
         f"ingested {result['line_count']} lines from {log_path} into {db_path}: "
         f"{result['events']} events "
@@ -212,7 +250,7 @@ def ingest_rtl_cmd(db_path: str, rtl_path: str, reset: bool) -> None:
             "Build xezim-core/xezim-parser (`cargo build --release`) "
             "or set XEVDB_SV_PARSE to its location."
         )
-    result = _db.ingest_rtl(rtl_path, db_path, reset=reset)
+    result = _backend(db_path).ingest_rtl(rtl_path, reset=reset)
     click.echo(
         f"ingested {result['files']} files into {db_path}: "
         f"{result['modules']} modules, {result['ports']} ports, "
@@ -228,7 +266,8 @@ def ingest_rtl_cmd(db_path: str, rtl_path: str, reset: bool) -> None:
 @click.option("--json", "as_json", is_flag=True)
 def modules(db_path: str, filter_name: str | None, limit: int, as_json: bool) -> None:
     """List parsed RTL modules."""
-    with _db.open_db(db_path, read_only=True) as con:
+    _require_raw_sql(db_path, "modules")
+    with _backend(db_path).open(read_only=True) as con:
         if filter_name:
             rows = con.execute(
                 "SELECT name, kind, file, line_start, line_end, body_summary "
@@ -265,7 +304,8 @@ def show(db_path: str, target: str, full: bool, context: int, no_line_numbers: b
     on a hierarchical VCD path. All slices are read from the source_files
     table inside the .xevdb (the original .sv files are not needed).
     """
-    with _db.open_db(db_path, read_only=True) as con:
+    _require_raw_sql(db_path, "show")
+    with _backend(db_path).open(read_only=True) as con:
         slices = _show.show_code(con, target, context=context, full=full)
     if not slices:
         raise click.ClickException(f"no RTL match for {target!r}")
@@ -289,8 +329,9 @@ def prompt() -> None:
 @click.option("--json", "as_json", is_flag=True)
 def prompt_list(db_path: str, as_json: bool) -> None:
     """List every stored prompt with its first-line description."""
-    with _db.open_db(db_path, read_only=True) as con:
-        ps = _prompts.list_prompts(con)
+    backend = _backend(db_path)
+    with backend.open(read_only=True) as con:
+        ps = backend.list_prompts(con)
     if as_json:
         click.echo(json.dumps([
             {"name": p.name, "description": p.description, "params": p.params} for p in ps
@@ -309,9 +350,10 @@ def prompt_list(db_path: str, as_json: bool) -> None:
 @click.argument("name")
 def prompt_show(db_path: str, name: str) -> None:
     """Print a prompt's description, parameter list, and SQL."""
-    with _db.open_db(db_path, read_only=True) as con:
+    backend = _backend(db_path)
+    with backend.open(read_only=True) as con:
         try:
-            p = _prompts.show_prompt(con, name)
+            p = backend.show_prompt(con, name)
         except KeyError as e:
             raise click.ClickException(str(e))
     click.echo(f"name:        {p.name}")
@@ -327,6 +369,10 @@ def prompt_show(db_path: str, name: str) -> None:
     click.echo("sql:")
     for line in p.sql.splitlines():
         click.echo(f"  {line}")
+    if p.dsl_json:
+        click.echo("dsl_json:")
+        for line in p.dsl_json.splitlines():
+            click.echo(f"  {line}")
 
 
 def _parse_args(pairs: tuple[str, ...]) -> dict[str, str]:
@@ -351,10 +397,11 @@ def prompt_run(db_path: str, name: str, args: tuple[str, ...],
                no_cache: bool, ttl: int, as_json: bool, limit_output: int) -> None:
     """Run a stored prompt with --arg overrides."""
     arg_dict = _parse_args(args)
-    with _db.open_db(db_path, read_only=False) as con:
+    backend = _backend(db_path)
+    with backend.open(read_only=False) as con:
         try:
-            rows, hit = _prompts.run_prompt(con, name, arg_dict,
-                                            use_cache=not no_cache, ttl_seconds=ttl)
+            rows, hit = backend.run_prompt(con, name, arg_dict,
+                                           use_cache=not no_cache, ttl_seconds=ttl)
         except KeyError as e:
             raise click.ClickException(str(e))
     if as_json:
@@ -382,24 +429,33 @@ def prompt_run(db_path: str, name: str, args: tuple[str, ...],
 @click.option("--from-file", "from_file", type=click.Path(exists=True, dir_okay=False))
 @click.option("--description", default="")
 @click.option("--params-json", default="[]")
+@click.option("--dsl-json", "dsl_json", default="",
+              help="Optional backend-agnostic query template (e.g. OpenSearch DSL). "
+                   "Ignored by the SQLite backend, which runs --sql.")
 @click.option("--overwrite", is_flag=True)
 def prompt_add(db_path: str, name: str, sql_text: str | None, from_file: str | None,
-               description: str, params_json: str, overwrite: bool) -> None:
+               description: str, params_json: str, dsl_json: str, overwrite: bool) -> None:
     """Store a new prompt or update an existing one."""
     if not sql_text and not from_file:
         raise click.ClickException("provide one of --sql or --from-file")
     if from_file:
         sql_text = Path(from_file).read_text()
+    if dsl_json:
+        try:
+            json.loads(dsl_json)
+        except json.JSONDecodeError as e:
+            raise click.ClickException(f"--dsl-json: {e}")
     try:
         params = json.loads(params_json)
         if not isinstance(params, list):
             raise ValueError("--params-json must decode to a list")
     except (json.JSONDecodeError, ValueError) as e:
         raise click.ClickException(f"--params-json: {e}")
-    with _db.open_db(db_path, read_only=False) as con:
+    backend = _backend(db_path)
+    with backend.open(read_only=False) as con:
         try:
-            _prompts.add_prompt(con, name, sql_text, description=description,
-                                params=params, overwrite=overwrite)
+            backend.add_prompt(con, name, sql_text, description=description,
+                               params=params, overwrite=overwrite, dsl_json=dsl_json)
         except Exception as e:
             raise click.ClickException(str(e))
     click.echo(f"stored prompt {name!r} in {db_path}")
@@ -410,8 +466,9 @@ def prompt_add(db_path: str, name: str, sql_text: str | None, from_file: str | N
 @click.argument("name")
 def prompt_remove(db_path: str, name: str) -> None:
     """Delete a stored prompt."""
-    with _db.open_db(db_path, read_only=False) as con:
-        gone = _prompts.remove_prompt(con, name)
+    backend = _backend(db_path)
+    with backend.open(read_only=False) as con:
+        gone = backend.remove_prompt(con, name)
     click.echo(f"removed {name!r}" if gone else f"no prompt named {name!r}")
 
 
@@ -429,8 +486,9 @@ def cache() -> None:
 @click.option("--json", "as_json", is_flag=True)
 def cache_stats(db_path: str, as_json: bool) -> None:
     """Cache size, hits, breakdown by prompt."""
-    with _db.open_db(db_path, read_only=True) as con:
-        info = _cache.stats(con)
+    backend = _backend(db_path)
+    with backend.open(read_only=True) as con:
+        info = backend.cache_stats(con)
     if as_json:
         click.echo(json.dumps(info, indent=2))
         return
@@ -451,8 +509,9 @@ def cache_stats(db_path: str, as_json: bool) -> None:
 @click.option("--json", "as_json", is_flag=True)
 def cache_list(db_path: str, prompt_name: str | None, limit: int, as_json: bool) -> None:
     """List recent cache entries (newest first)."""
-    with _db.open_db(db_path, read_only=True) as con:
-        rows = _cache.list_entries(con, prompt=prompt_name, limit=limit)
+    backend = _backend(db_path)
+    with backend.open(read_only=True) as con:
+        rows = backend.cache_list(con, prompt=prompt_name, limit=limit)
     if as_json:
         click.echo(json.dumps(rows, indent=2, default=str))
         return
@@ -476,8 +535,9 @@ def cache_clear(db_path: str, prompt_name: str | None, yes: bool) -> None:
         msg = (f"clear cache entries for prompt={prompt_name!r}" if prompt_name
                else "clear ALL cache entries")
         click.confirm(f"{msg}?", abort=True)
-    with _db.open_db(db_path, read_only=False) as con:
-        n = _cache.clear(con, prompt=prompt_name)
+    backend = _backend(db_path)
+    with backend.open(read_only=False) as con:
+        n = backend.cache_clear(con, prompt=prompt_name)
     click.echo(f"deleted {n} entries")
 
 
@@ -503,7 +563,8 @@ def xz() -> None:
 @click.option("--json", "as_json", is_flag=True)
 def xz_summary(db_path: str, as_json: bool) -> None:
     """Overview: how widespread the X/Z is, and the root-cause set."""
-    with _db.open_db(db_path, read_only=True) as con:
+    _require_raw_sql(db_path, "xz summary")
+    with _backend(db_path).open(read_only=True) as con:
         ov = _xz.overview(con)
     if as_json:
         click.echo(json.dumps(_xz.to_dict(ov), indent=2))
@@ -533,7 +594,8 @@ def xz_summary(db_path: str, as_json: bool) -> None:
 @click.option("--json", "as_json", is_flag=True)
 def xz_first(db_path: str, limit: int, as_json: bool) -> None:
     """Signals ranked by the time they FIRST went X/Z (root causes first)."""
-    with _db.open_db(db_path, read_only=True) as con:
+    _require_raw_sql(db_path, "xz first")
+    with _backend(db_path).open(read_only=True) as con:
         rows = _xz.first(con, limit)
     if as_json:
         click.echo(json.dumps(_xz.to_dict(rows), indent=2))
@@ -553,7 +615,8 @@ def xz_first(db_path: str, limit: int, as_json: bool) -> None:
 @click.option("--json", "as_json", is_flag=True)
 def xz_signal(db_path: str, signal: str, as_json: bool) -> None:
     """Enter/leave X/Z intervals for one SIGNAL over the whole trace."""
-    with _db.open_db(db_path, read_only=True) as con:
+    _require_raw_sql(db_path, "xz signal")
+    with _backend(db_path).open(read_only=True) as con:
         sig = _db.resolve_signal(con, signal)
         if sig is None:
             raise click.ClickException(
@@ -585,7 +648,8 @@ def xz_signal(db_path: str, signal: str, as_json: bool) -> None:
 @click.option("--json", "as_json", is_flag=True)
 def xz_at(db_path: str, t: int, limit: int, as_json: bool) -> None:
     """Every signal sitting in X/Z at simulation time T (waveform semantic)."""
-    with _db.open_db(db_path, read_only=True) as con:
+    _require_raw_sql(db_path, "xz at")
+    with _backend(db_path).open(read_only=True) as con:
         rows = _xz.at(con, t, limit)
     if as_json:
         click.echo(json.dumps({
@@ -617,7 +681,8 @@ def xz_propagate(db_path: str, seed: str, window: int | None,
     If the .xevdb has RTL ingested, each candidate shows the module + line
     where a same-named signal is declared.
     """
-    with _db.open_db(db_path, read_only=True) as con:
+    _require_raw_sql(db_path, "xz propagate")
+    with _backend(db_path).open(read_only=True) as con:
         sig = _db.resolve_signal(con, seed)
         if sig is None:
             raise click.ClickException(
@@ -644,6 +709,212 @@ def xz_propagate(db_path: str, seed: str, window: int | None,
             rtl = f"  [{c.rtl_module} @ {c.rtl_file}:{c.rtl_line}]"
         click.echo(f"{c.delta_t:>9d}  {c.first_xz_t:>10d}  {c.xz_kind:<4s}  "
                    f"{c.fullname}{rtl}")
+
+
+# ----------------------------------------------------------------------------
+# bug — bug knowledge base
+# ----------------------------------------------------------------------------
+
+@main.group()
+def bug() -> None:
+    """Record, search, and recall named bugs (what was wrong + the fix).
+
+    \b
+    xevdb bug add    <db> <name> [--symptom ... --fix ... --signal ...]
+    xevdb bug show   <db> <name>
+    xevdb bug list   <db> [--status open]
+    xevdb bug search <db> <query>          full-text over symptom/root-cause/fix
+    xevdb bug remove <db> <name>
+    """
+
+
+def _render_bug(b: _bugs.Bug) -> str:
+    lines = [f"{b.name}   [{b.status}{('/' + b.severity) if b.severity else ''}]"]
+    if b.title:
+        lines.append(f"  title:      {b.title}")
+    for label, val in (("symptom", b.symptom), ("root_cause", b.root_cause),
+                       ("fix", b.fix), ("fix_ref", b.fix_ref)):
+        if val:
+            lines.append(f"  {label:<11s} {val}")
+    if b.keywords:
+        lines.append(f"  keywords:   {', '.join(b.keywords)}")
+    if b.tags:
+        lines.append(f"  tags:       {', '.join(b.tags)}")
+    if b.links:
+        lines.append("  links:")
+        for lk in b.links:
+            lines.append(f"    {lk.kind:<10s} {lk.value}"
+                         f"{('  (' + lk.extra + ')') if lk.extra else ''}")
+    return "\n".join(lines)
+
+
+def _links_from_opts(signals, modules, refs) -> list[_bugs.BugLink]:
+    out: list[_bugs.BugLink] = []
+    out += [_bugs.BugLink("signal", v) for v in signals]
+    out += [_bugs.BugLink("module", v) for v in modules]
+    out += [_bugs.BugLink("ref", v) for v in refs]
+    return out
+
+
+@bug.command(name="add")
+@click.argument("db_path", type=click.Path(exists=True, dir_okay=False))
+@click.argument("name")
+@click.option("--title", default="")
+@click.option("--status", default="open", show_default=True,
+              help="open | investigating | fixed | wontfix")
+@click.option("--severity", default="", help="fatal | error | warning | info")
+@click.option("--symptom", default="", help="what was wrong / how it showed up")
+@click.option("--root-cause", "root_cause", default="")
+@click.option("--fix", default="")
+@click.option("--fix-ref", "fix_ref", default="", help="commit / PR / issue ref")
+@click.option("--keyword", "keywords", multiple=True, help="searchable keyword (repeatable)")
+@click.option("--tag", "tags", multiple=True, help="facet tag (repeatable)")
+@click.option("--signal", "signals", multiple=True, help="associated signal fullname (repeatable)")
+@click.option("--module", "modules", multiple=True, help="associated module (repeatable)")
+@click.option("--ref", "refs", multiple=True, help="associated file:line (repeatable)")
+@click.option("--overwrite", is_flag=True, help="update the bug if it already exists")
+def bug_add(db_path: str, name: str, title: str, status: str, severity: str,
+            symptom: str, root_cause: str, fix: str, fix_ref: str,
+            keywords: tuple[str, ...], tags: tuple[str, ...], signals: tuple[str, ...],
+            modules: tuple[str, ...], refs: tuple[str, ...], overwrite: bool) -> None:
+    """Record a bug (or update it with --overwrite)."""
+    backend = _backend(db_path)
+    links = _links_from_opts(signals, modules, refs)
+    with backend.open(read_only=False) as con:
+        try:
+            b = backend.add_bug(con, name, title=title, status=status,
+                                severity=severity, symptom=symptom,
+                                root_cause=root_cause, fix=fix, fix_ref=fix_ref,
+                                keywords=list(keywords), tags=list(tags),
+                                links=links, overwrite=overwrite)
+        except ValueError as e:
+            raise click.ClickException(str(e))
+    click.echo(f"stored bug {b.name!r} in {db_path}")
+
+
+@bug.command(name="show")
+@click.argument("db_path", type=click.Path(exists=True, dir_okay=False))
+@click.argument("name")
+@click.option("--json", "as_json", is_flag=True)
+def bug_show(db_path: str, name: str, as_json: bool) -> None:
+    """Show one bug by name."""
+    backend = _backend(db_path)
+    with backend.open(read_only=True) as con:
+        b = backend.get_bug(con, name)
+    if b is None:
+        raise click.ClickException(f"no bug named {name!r}")
+    click.echo(json.dumps(b.to_dict(), indent=2) if as_json else _render_bug(b))
+
+
+@bug.command(name="list")
+@click.argument("db_path", type=click.Path(exists=True, dir_okay=False))
+@click.option("--status", default=None)
+@click.option("--severity", default=None)
+@click.option("--tag", default=None)
+@click.option("--limit", type=int, default=50, show_default=True)
+@click.option("--json", "as_json", is_flag=True)
+def bug_list(db_path: str, status: str | None, severity: str | None,
+             tag: str | None, limit: int, as_json: bool) -> None:
+    """List bugs (newest first) with optional facet filters."""
+    backend = _backend(db_path)
+    with backend.open(read_only=True) as con:
+        bugs = backend.list_bugs(con, status=status, severity=severity,
+                                 tag=tag, limit=limit)
+    if as_json:
+        click.echo(json.dumps([b.to_dict() for b in bugs], indent=2))
+        return
+    if not bugs:
+        click.echo("(no bugs)")
+        return
+    for b in bugs:
+        sev = f"/{b.severity}" if b.severity else ""
+        click.echo(f"{b.name:<28s}[{b.status}{sev}]  {b.title}")
+
+
+@bug.command(name="search")
+@click.argument("db_path", type=click.Path(exists=True, dir_okay=False))
+@click.argument("query")
+@click.option("--status", default=None)
+@click.option("--keyword", default=None)
+@click.option("--limit", type=int, default=50, show_default=True)
+@click.option("--json", "as_json", is_flag=True)
+def bug_search(db_path: str, query: str, status: str | None, keyword: str | None,
+               limit: int, as_json: bool) -> None:
+    """Full-text search bugs (FTS5 when available, else LIKE)."""
+    backend = _backend(db_path)
+    with backend.open(read_only=True) as con:
+        bugs = backend.search_bugs(con, query, status=status,
+                                   keyword=keyword, limit=limit)
+    if as_json:
+        click.echo(json.dumps([b.to_dict() for b in bugs], indent=2))
+        return
+    if not bugs:
+        click.echo(f"no bugs matching {query!r}")
+        return
+    for b in bugs:
+        sev = f"/{b.severity}" if b.severity else ""
+        click.echo(f"{b.name:<28s}[{b.status}{sev}]  {b.title}")
+
+
+@bug.command(name="link")
+@click.argument("db_path", type=click.Path(exists=True, dir_okay=False))
+@click.argument("name")
+@click.option("--signal", "signal", default=None)
+@click.option("--module", "module", default=None)
+@click.option("--ref", "ref", default=None, help="file:line")
+@click.option("--event", "event", default=None)
+@click.option("--assertion", "assertion", default=None)
+@click.option("--txn", "txn", default=None)
+@click.option("--coverage", "coverage", default=None)
+@click.option("--extra", default="", help="optional note stored with the link")
+def bug_link(db_path: str, name: str, signal: str | None, module: str | None,
+             ref: str | None, event: str | None, assertion: str | None,
+             txn: str | None, coverage: str | None, extra: str) -> None:
+    """Attach an association (signal/module/ref/event/assertion/txn/coverage) to a bug."""
+    pairs = [(k, v) for k, v in (
+        ("signal", signal), ("module", module), ("ref", ref), ("event", event),
+        ("assertion", assertion), ("txn", txn), ("coverage", coverage)) if v]
+    if len(pairs) != 1:
+        raise click.ClickException("provide exactly one of "
+                                   "--signal/--module/--ref/--event/--assertion/--txn/--coverage")
+    kind, value = pairs[0]
+    backend = _backend(db_path)
+    with backend.open(read_only=False) as con:
+        try:
+            backend.link_bug(con, name, kind, value, extra)
+        except ValueError as e:
+            raise click.ClickException(str(e))
+    click.echo(f"linked {kind}={value!r} to bug {name!r}")
+
+
+@bug.command(name="close")
+@click.argument("db_path", type=click.Path(exists=True, dir_okay=False))
+@click.argument("name")
+@click.option("--status", default="fixed", show_default=True,
+              help="resolution status (fixed | wontfix | ...)")
+@click.option("--fix", default=None, help="how it was fixed")
+@click.option("--fix-ref", "fix_ref", default=None, help="commit / PR / issue ref")
+def bug_close(db_path: str, name: str, status: str, fix: str | None,
+              fix_ref: str | None) -> None:
+    """Resolve a bug (set status, optionally fix/fix-ref)."""
+    backend = _backend(db_path)
+    with backend.open(read_only=False) as con:
+        try:
+            b = backend.close_bug(con, name, status=status, fix=fix, fix_ref=fix_ref)
+        except ValueError as e:
+            raise click.ClickException(str(e))
+    click.echo(f"bug {b.name!r} -> {b.status}")
+
+
+@bug.command(name="remove")
+@click.argument("db_path", type=click.Path(exists=True, dir_okay=False))
+@click.argument("name")
+def bug_remove(db_path: str, name: str) -> None:
+    """Delete a bug by name."""
+    backend = _backend(db_path)
+    with backend.open(read_only=False) as con:
+        gone = backend.remove_bug(con, name)
+    click.echo(f"removed {name!r}" if gone else f"no bug named {name!r}")
 
 
 if __name__ == "__main__":

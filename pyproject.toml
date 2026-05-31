@@ -15,8 +15,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-duckdb = ["duckdb>=1.0", "pyarrow>=15"]
-dev    = ["pytest>=8", "ruff>=0.5"]
+duckdb     = ["duckdb>=1.0", "pyarrow>=15"]
+opensearch = ["opensearch-py>=2.4"]
+dev        = ["pytest>=8", "ruff>=0.5"]
 
 [project.scripts]
 xevdb = "xevdb.cli:main"

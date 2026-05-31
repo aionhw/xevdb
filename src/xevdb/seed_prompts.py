@@ -20,6 +20,10 @@ class SeedPrompt:
     description: str
     sql: str
     params: list[dict]
+    # Optional backend-agnostic query template (e.g. an OpenSearch DSL body as
+    # a JSON string). Empty means SQL-only; non-relational backends that lack a
+    # `dsl` for a prompt should skip or fall back rather than run `sql`.
+    dsl: str = ""
 
 
 PROMPTS: list[SeedPrompt] = [
@@ -48,6 +52,9 @@ PROMPTS: list[SeedPrompt] = [
             "GROUP BY s.id ORDER BY transitions DESC LIMIT :limit"
         ),
         params=[{"name": "limit", "default": 50, "type": "int"}],
+        # changes carry a denormalized `fullname`; a terms agg == per-signal count.
+        dsl='{"index": "changes", "rows": "aggs:sigs", "body": {"size": 0, "aggs": '
+            '{"sigs": {"terms": {"field": "fullname", "size": ":limit"}}}}}',
     ),
     SeedPrompt(
         name="stuck_at",
@@ -72,6 +79,10 @@ PROMPTS: list[SeedPrompt] = [
             "ORDER BY s.fullname LIMIT :limit"
         ),
         params=[{"name": "limit", "default": 200, "type": "int"}],
+        # changes carry a precomputed `xz` boolean — filter + distinct fullnames.
+        dsl='{"index": "changes", "rows": "aggs:sigs", "body": {"size": 0, '
+            '"query": {"term": {"xz": true}}, "aggs": {"sigs": {"terms": '
+            '{"field": "fullname", "size": ":limit"}}}}}',
     ),
     SeedPrompt(
         name="signals_in_scope",
@@ -84,6 +95,8 @@ PROMPTS: list[SeedPrompt] = [
             {"name": "prefix", "default": "", "type": "str"},
             {"name": "limit", "default": 500, "type": "int"},
         ],
+        dsl='{"index": "signals", "body": {"size": ":limit", "query": {"prefix": '
+            '{"hier": ":prefix"}}, "sort": [{"fullname": "asc"}]}}',
     ),
     SeedPrompt(
         name="value_at_many",
@@ -145,6 +158,8 @@ PROMPTS: list[SeedPrompt] = [
             "FROM modules ORDER BY file, line_start LIMIT :limit"
         ),
         params=[{"name": "limit", "default": 100, "type": "int"}],
+        dsl='{"index": "modules", "body": {"size": ":limit", "query": {"match_all": '
+            '{}}, "sort": [{"file": "asc"}, {"line_start": "asc"}]}}',
     ),
     SeedPrompt(
         name="ports_of_module",
@@ -334,6 +349,107 @@ PROMPTS: list[SeedPrompt] = [
         ),
         params=[{"name": "limit", "default": 50, "type": "int"}],
     ),
+    # ---------- bug knowledge base -----------------------------------------
+    SeedPrompt(
+        name="bug_search",
+        description="Search the bug KB (portable LIKE over title/symptom/root-cause/"
+                    "fix/keywords). The `bug search` CLI uses FTS5 ranking when available.",
+        sql=(
+            "SELECT name, status, severity, title FROM bugs "
+            "WHERE title LIKE '%'||:query||'%' OR symptom LIKE '%'||:query||'%' "
+            "   OR root_cause LIKE '%'||:query||'%' OR fix LIKE '%'||:query||'%' "
+            "   OR keywords_json LIKE '%'||:query||'%' "
+            "ORDER BY updated_at DESC LIMIT :limit"
+        ),
+        params=[
+            {"name": "query", "default": "", "type": "str"},
+            {"name": "limit", "default": 50, "type": "int"},
+        ],
+        dsl='{"index": "bugs", "body": {"size": ":limit", "query": {"multi_match": '
+            '{"query": ":query", "fields": ["title", "symptom", "root_cause", "fix", '
+            '"keywords", "tags"]}}}}',
+    ),
+    SeedPrompt(
+        name="bugs_by_status",
+        description="Bugs with a given status (open/investigating/fixed/wontfix), newest first.",
+        sql=(
+            "SELECT name, severity, title, updated_at FROM bugs "
+            "WHERE status = :status ORDER BY updated_at DESC LIMIT :limit"
+        ),
+        params=[
+            {"name": "status", "default": "open", "type": "str"},
+            {"name": "limit", "default": 100, "type": "int"},
+        ],
+        dsl='{"index": "bugs", "body": {"size": ":limit", "query": {"term": '
+            '{"status": ":status"}}, "sort": [{"updated_at": "desc"}]}}',
+    ),
+    SeedPrompt(
+        name="bugs_for_signal",
+        description="Bugs linked to a given signal (by fullname or bare name).",
+        sql=(
+            "SELECT DISTINCT b.name, b.status, b.severity, b.title "
+            "FROM bugs b JOIN bug_links bl ON bl.bug_name = b.name "
+            "WHERE bl.kind = 'signal' AND (bl.value = :signal OR bl.value LIKE '%.'||:signal) "
+            "ORDER BY b.updated_at DESC LIMIT :limit"
+        ),
+        params=[
+            {"name": "signal", "default": "", "type": "str"},
+            {"name": "limit", "default": 50, "type": "int"},
+        ],
+        # OpenSearch: signals are a denormalized array on the bug doc — no join.
+        dsl='{"index": "bugs", "body": {"size": ":limit", "query": {"term": '
+            '{"signals": ":signal"}}}}',
+    ),
+    SeedPrompt(
+        name="bugs_for_module",
+        description="Bugs linked to a given module.",
+        sql=(
+            "SELECT DISTINCT b.name, b.status, b.severity, b.title "
+            "FROM bugs b JOIN bug_links bl ON bl.bug_name = b.name "
+            "WHERE bl.kind = 'module' AND bl.value = :module "
+            "ORDER BY b.updated_at DESC LIMIT :limit"
+        ),
+        params=[
+            {"name": "module", "default": "", "type": "str"},
+            {"name": "limit", "default": 50, "type": "int"},
+        ],
+        dsl='{"index": "bugs", "body": {"size": ":limit", "query": {"term": '
+            '{"modules": ":module"}}}}',
+    ),
+    SeedPrompt(
+        name="bugs_with_rtl",
+        description="Cross — bugs whose `ref` (file:line) lands inside a parsed module. "
+                    "SQL-only (true cross-index join).",
+        sql=(
+            "SELECT b.name, b.status, bl.value AS ref, m.name AS module, "
+            "       m.file, m.line_start, m.line_end "
+            "FROM bugs b "
+            "JOIN bug_links bl ON bl.bug_name = b.name AND bl.kind = 'ref' "
+            "JOIN modules m "
+            "  ON (m.file = substr(bl.value, 1, instr(bl.value, ':') - 1) "
+            "      OR m.file LIKE '%'||substr(bl.value, 1, instr(bl.value, ':') - 1)) "
+            " AND CAST(substr(bl.value, instr(bl.value, ':') + 1) AS INTEGER) "
+            "       BETWEEN m.line_start AND m.line_end "
+            "ORDER BY b.name LIMIT :limit"
+        ),
+        params=[{"name": "limit", "default": 100, "type": "int"}],
+    ),
+    SeedPrompt(
+        name="xz_signals_with_open_bugs",
+        description="Cross — VCD X/Z signals that already have a non-fixed bug linked. "
+                    "SQL-only (true cross-index join).",
+        sql=(
+            "SELECT DISTINCT s.fullname, b.name AS bug, b.status, b.severity "
+            "FROM signals s JOIN changes c ON c.sig_id = s.id "
+            "JOIN bug_links bl ON bl.kind = 'signal' "
+            "     AND (bl.value = s.fullname OR bl.value LIKE '%.'||s.name) "
+            "JOIN bugs b ON b.name = bl.bug_name AND b.status != 'fixed' "
+            "WHERE c.value LIKE '%x%' OR c.value LIKE '%z%' "
+            "   OR c.value LIKE '%X%' OR c.value LIKE '%Z%' "
+            "ORDER BY s.fullname LIMIT :limit"
+        ),
+        params=[{"name": "limit", "default": 100, "type": "int"}],
+    ),
 ]
 
 
@@ -347,9 +463,9 @@ def install(con: sqlite3.Connection) -> int:
         if cur.fetchone() is not None:
             continue
         con.execute(
-            "INSERT INTO prompts (name, description, sql, params_json, "
-            "created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-            (p.name, p.description, p.sql, json.dumps(p.params), now, now),
+            "INSERT INTO prompts (name, description, sql, dsl_json, params_json, "
+            "created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (p.name, p.description, p.sql, p.dsl, json.dumps(p.params), now, now),
         )
         n += 1
     return n

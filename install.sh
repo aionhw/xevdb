@@ -14,6 +14,7 @@
 #   bash install.sh --no-rust        # skip clone+build (RTL features unavailable)
 #   bash install.sh --recreate-venv
 #   bash install.sh --with-duckdb
+#   bash install.sh --with-opensearch   # opt-in OpenSearch backend
 #   bash install.sh --help
 #
 # Environment:
@@ -25,16 +26,17 @@ set -euo pipefail
 SMOKE=1
 BUILD_RUST=1
 RECREATE=0
-EXTRAS=""
+EXTRA_LIST=()
 
 for arg in "$@"; do
     case "$arg" in
-        --no-smoke)       SMOKE=0 ;;
-        --no-rust)        BUILD_RUST=0 ;;
-        --recreate-venv)  RECREATE=1 ;;
-        --with-duckdb)    EXTRAS="[duckdb]" ;;
+        --no-smoke)        SMOKE=0 ;;
+        --no-rust)         BUILD_RUST=0 ;;
+        --recreate-venv)   RECREATE=1 ;;
+        --with-duckdb)     EXTRA_LIST+=("duckdb") ;;
+        --with-opensearch) EXTRA_LIST+=("opensearch") ;;
         -h|--help)
-            sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'
+            sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'
             exit 0 ;;
         *)
             echo "unknown flag: $arg" >&2
@@ -104,6 +106,10 @@ source "$VENV/bin/activate"
 python -m pip install --upgrade pip wheel >/dev/null
 
 LOG="$REPO/.install-pip.log"
+EXTRAS=""
+if (( ${#EXTRA_LIST[@]} )); then
+    EXTRAS="$(IFS=,; echo "[${EXTRA_LIST[*]}]")"
+fi
 if pip install -e ".${EXTRAS}" >"$LOG" 2>&1; then
     ok "xevdb installed${EXTRAS:+ (with optional $EXTRAS)}"
 else

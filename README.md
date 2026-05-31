@@ -33,8 +33,9 @@ queryable file you can hand to a teammate or pipe through `jq`.
 
 ```sh
 bash install.sh                   # venv + clone/build sv-parse + smoke-test
-# or, opt-in to the DuckDB backend for very large dumps:
+# or, opt-in to an alternate backend for very large / shared dumps:
 bash install.sh --with-duckdb
+bash install.sh --with-opensearch # serve a dataset from an OpenSearch cluster
 
 source .venv/bin/activate
 ```
@@ -242,6 +243,38 @@ xevdb prompt remove <db> <name>
 | `xz_signals_with_rtl` | wave + rtl | Cross — VCD X/Z signals joined with their RTL declaration. |
 | `sim_with_rtl` | sim + rtl | Cross — sim events whose `ref_file:ref_line` lands in a parsed module. |
 
+### Bug knowledge base
+
+Record what went wrong and how it was fixed, then find it again later. A bug
+has a unique slug name, free-text symptom / root-cause / fix, searchable
+keywords + tags, and typed links to the signals, modules, and `file:line`
+refs it touches.
+
+```
+xevdb bug add    <db> <name> [--symptom ...] [--fix ...] [--keyword K]*
+                             [--signal S]* [--module M]* [--ref FILE:LINE]*
+xevdb bug show   <db> <name>                       [--json]
+xevdb bug list   <db> [--status open] [--tag T]    [--json]
+xevdb bug search <db> <query>                      [--json]   # full-text
+xevdb bug link   <db> <name> --signal S | --module M | --ref FILE:LINE
+xevdb bug close  <db> <name> [--fix ...] [--fix-ref PR#42]
+xevdb bug remove <db> <name>
+```
+
+`bug search` uses SQLite FTS5 ranking when available (falling back to a
+portable `LIKE` scan), or an OpenSearch `multi_match` on that backend. Bugs
+join into the rest of the data through the `bugs_for_signal`,
+`bugs_for_module`, `bugs_with_rtl`, and `xz_signals_with_open_bugs` prompts.
+
+```sh
+xevdb bug add picorv32.xevdb "axi-fifo-xprop" --severity error \
+  --symptom "fifo_full goes X after reset" \
+  --root-cause "uninitialized temp array read past populated range" \
+  --fix "pre-init temp arrays before \$readmemh" \
+  --signal testbench.top.mem_axi_araddr --ref picorv32.v:176
+xevdb bug search picorv32.xevdb "uninitialized reset"
+```
+
 ### Cache
 
 ```
@@ -251,6 +284,40 @@ xevdb cache clear <db> [--prompt NAME] [--yes]
 ```
 
 Bypass entirely with `XEVDB_NO_CACHE=1`.
+
+## Backends
+
+xevdb stores a dataset behind a pluggable backend. The default is **SQLite** —
+the self-contained `.xevdb` file everything above describes. An optional
+**OpenSearch** backend serves the same dataset from a cluster, for dumps too
+large for one file or shared across a team.
+
+```sh
+# SQLite (default) — nothing to choose
+xevdb build wave.vcd
+
+# OpenSearch — the data lives in a cluster; the on-disk artifact is a tiny
+# JSON *pointer file* naming the cluster + dump id (created on first build).
+export XEVDB_OPENSEARCH_HOSTS=localhost:9200
+xevdb --backend opensearch build wave.vcd --db wave.xevdb
+xevdb prompt run wave.xevdb change_count        # auto-routes: a pointer file → opensearch
+```
+
+Select the backend with `--backend sqlite|opensearch` or `$XEVDB_BACKEND`; a
+pointer file auto-routes to OpenSearch with no flag. The two backends share one
+logical surface (`build`, `ingest-*`, `at`, `window`, `find`, `prompt`,
+`cache`, `bug`).
+
+**What differs on OpenSearch:**
+
+- **Prompts** run a prompt's `dsl_json` template, not its `sql`. Seeded prompts
+  carry both where the query maps cleanly; cross-index-join prompts
+  (`*_with_rtl`, `xz_signals_with_open_bugs`) are SQL-only and raise on
+  OpenSearch. Add `dsl_json` to your own prompts with `prompt add --dsl-json`.
+- **`modules`, `show`, and `xz`** read via hand-written SQL and are
+  SQLite-only; they fail fast with a clear message on OpenSearch.
+- Links/associations are denormalized into document arrays instead of a side
+  table, so signal/module bug lookups need no join.
 
 ## Schema
 
@@ -295,9 +362,16 @@ CREATE TABLE module_signals    (module_id, name, kind, line, width, decl_text);
 CREATE TABLE module_instances  (parent_module_id, child_module_name,
                                 instance_name, line);
 
+-- bug knowledge base
+CREATE TABLE bugs       (name PK, title, status, severity, symptom,
+                         root_cause, fix, fix_ref, keywords_json, tags_json,
+                         created_at, updated_at);
+CREATE TABLE bug_links  (bug_name, kind, value, extra);   -- signal/module/ref/...
+-- bugs_fts: an FTS5 mirror of the text columns, when SQLite has FTS5
+
 -- prompts + cache
-CREATE TABLE prompts (name PK, description, sql, params_json,
-                      created_at, updated_at);
+CREATE TABLE prompts (name PK, description, sql, dsl_json, params_json,
+                      created_at, updated_at);   -- dsl_json: OpenSearch query template
 CREATE TABLE cache   (key PK, prompt_name, args_json, result_json,
                       created_at, hits, last_hit_at, ttl_seconds);
 ```
