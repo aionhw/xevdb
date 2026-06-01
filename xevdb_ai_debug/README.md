@@ -102,7 +102,15 @@ For a local OpenSearch demo you can run your own OpenSearch container. The app s
 
 ## Real ChipScoPy hook
 
-`connectors/chipscopy_connector.py` includes a skeleton for real board capture. It expects hw_server/cs_server, a device, an ILA core, and optionally PDI/LTX files.
+`connectors/chipscopy_connector.py` does real board capture following the
+[official chipscopy examples](https://github.com/Xilinx/chipscopy/tree/master/chipscopy/examples/ila_and_vio):
+`create_session` → `devices.filter_by(family=).get()` → `program(pdi)` →
+`discover_and_setup_cores(ltx_file=)` → `ila_cores.get(name=)` →
+`reset_probes`/`set_probe_trigger_value` → `run_basic_trigger(...)` →
+`wait_till_done` → `upload` → `waveform.get_data([probes], include_trigger=True,
+include_sample_info=True)`. `normalize_chipscopy_data()` adapts ChipScoPy's
+`trigger`/`sample_index`/… columns to this app's `__`-prefixed shape. ChipScoPy
+is a lazy, optional board-side import.
 
 ## Model connectors (Claude / Codex)
 
