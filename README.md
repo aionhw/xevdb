@@ -393,4 +393,4 @@ CREATE TABLE cache   (key PK, prompt_name, args_json, result_json,
 
 ## License
 
-MIT.
+Apache 2.0.
