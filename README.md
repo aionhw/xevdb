@@ -228,8 +228,9 @@ xevdb prompt remove <db> <name>
 prompts are in [Bug knowledge base](#bug-knowledge-base), and the RISC-V and
 kernel prompts in their reference sections. `xevdb prompt list <db>` shows them
 all. On the OpenSearch backend a prompt runs only if it carries a `dsl_json`
-(24 of 42 do today); the SQL-only ones — RTL `*_of_module`, the `sim_*` family,
-and the cross-index joins — are SQLite-only and report so.
+(31 of 42 do today); the remaining SQL-only ones — the cross-index joins,
+`clock_period`, `value_at_many`, `stuck_at`, and the LIKE-pattern lookups — are
+SQLite-only and report so.
 
 **Seeded prompts — waveform / RTL / sim core (20):**
 

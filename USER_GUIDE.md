@@ -496,9 +496,10 @@ xevdb prompt run c906.ptr.json change_count --arg limit=20
 **What works on each backend.** The waveform queries (`at`, `window`, `find`,
 `stats`), the prompt library (for prompts that carry a `dsl_json`), the cache,
 and the bug KB all run on OpenSearch. **SQLite-only** today: `show` / `modules`,
-the whole `xz` group, and the 18 prompts without a `dsl_json` (the `sim_*`
-family, the RTL `*_of_module` queries, and the cross-index joins) — these report
-a clear "sqlite-only" message rather than returning wrong results. See §17.
+the whole `xz` group, and the 11 prompts without a `dsl_json` (the cross-index
+joins, `clock_period`, `value_at_many`, `stuck_at`, and the LIKE-pattern lookups
+like `sim_by_ref_file`) — these report a clear "sqlite-only" message rather than
+returning wrong results. See §17.
 
 ---
 
@@ -635,7 +636,7 @@ xevdb prompt run d.xevdb instance_tree --arg module=top
 |---|---|---|
 | `build` / `ingest-rtl` / `ingest-sim` | ✅ | ✅ |
 | `at` / `window` / `find` / `stats` | ✅ | ✅ |
-| Prompts with a `dsl_json` (24/42) | ✅ | ✅ |
+| Prompts with a `dsl_json` (31/42) | ✅ | ✅ |
 | Prompts without `dsl_json` (`sim_*`, RTL joins) | ✅ | ⚠️ sqlite-only |
 | `show` / `modules` (RTL source) | ✅ | ⚠️ sqlite-only |
 | `xz` tracing | ✅ | ⚠️ sqlite-only |

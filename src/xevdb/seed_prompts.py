@@ -42,6 +42,11 @@ PROMPTS: list[SeedPrompt] = [
             {"name": "t1", "default": 9223372036854775807, "type": "int"},
             {"name": "limit", "default": 20, "type": "int"},
         ],
+        # changes carry a denormalized `fullname` + `t`; range-filter then a
+        # terms agg gives per-signal counts in the window.
+        dsl='{"index": "changes", "rows": "aggs:sigs", "body": {"size": 0, '
+            '"query": {"range": {"t": {"gte": ":t0", "lte": ":t1"}}}, '
+            '"aggs": {"sigs": {"terms": {"field": "fullname", "size": ":limit"}}}}}',
     ),
     SeedPrompt(
         name="change_count",
@@ -130,6 +135,10 @@ PROMPTS: list[SeedPrompt] = [
             {"name": "t1", "default": 9223372036854775807, "type": "int"},
             {"name": "limit", "default": 1000, "type": "int"},
         ],
+        # changes carry a denormalized `fullname`; filter to one signal + window.
+        dsl='{"index": "changes", "body": {"size": ":limit", "query": {"bool": '
+            '{"filter": [{"term": {"fullname": ":signal"}}, {"range": {"t": '
+            '{"gte": ":t0", "lte": ":t1"}}}]}}, "sort": [{"t": "asc"}]}}',
     ),
     SeedPrompt(
         name="clock_period",
@@ -170,6 +179,9 @@ PROMPTS: list[SeedPrompt] = [
             "WHERE m.name = :module ORDER BY p.position"
         ),
         params=[{"name": "module", "default": "", "type": "str"}],
+        # module_ports carry a denormalized `module_name` — no join needed.
+        dsl='{"index": "module_ports", "body": {"size": 1000, "query": {"term": '
+            '{"module_name": ":module"}}, "sort": [{"position": "asc"}]}}',
     ),
     SeedPrompt(
         name="signals_of_module",
@@ -183,6 +195,9 @@ PROMPTS: list[SeedPrompt] = [
             {"name": "module", "default": "", "type": "str"},
             {"name": "limit", "default": 200, "type": "int"},
         ],
+        # module_signals carry a denormalized `module_name`.
+        dsl='{"index": "module_signals", "body": {"size": ":limit", "query": '
+            '{"term": {"module_name": ":module"}}, "sort": [{"line": "asc"}]}}',
     ),
     SeedPrompt(
         name="signal_declaration",
@@ -247,6 +262,9 @@ PROMPTS: list[SeedPrompt] = [
             "FROM sim_runs ORDER BY id"
         ),
         params=[],
+        # sim_runs already stores the per-run counts — just return the docs.
+        dsl='{"index": "sim_runs", "body": {"size": 1000, "query": {"match_all": '
+            '{}}, "sort": [{"id": "asc"}]}}',
     ),
     SeedPrompt(
         name="sim_errors",
@@ -262,6 +280,9 @@ PROMPTS: list[SeedPrompt] = [
             "ORDER BY e.t IS NULL, e.t, e.line_no LIMIT :limit"
         ),
         params=[{"name": "limit", "default": 100, "type": "int"}],
+        dsl='{"index": "sim_events", "body": {"size": ":limit", "query": {"terms": '
+            '{"severity": ["UVM_FATAL", "UVM_ERROR", "FATAL", "ERROR", "ASSERTION"]}}, '
+            '"sort": [{"t": {"order": "asc", "missing": "_last"}}, {"line_no": "asc"}]}}',
     ),
     SeedPrompt(
         name="sim_around_time",
@@ -283,6 +304,9 @@ PROMPTS: list[SeedPrompt] = [
              "description": "Window end."},
             {"name": "limit", "default": 100, "type": "int"},
         ],
+        dsl='{"index": "sim_events", "body": {"size": ":limit", "query": {"range": '
+            '{"t": {"gte": ":t0", "lte": ":t1"}}}, "sort": [{"t": "asc"}, '
+            '{"line_no": "asc"}]}}',
     ),
     SeedPrompt(
         name="sim_by_ref_file",
