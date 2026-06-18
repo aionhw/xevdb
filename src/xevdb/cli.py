@@ -221,6 +221,67 @@ def stats(db_path: str, as_json: bool) -> None:
         click.echo(f"  {k:<18s}{v}")
 
 
+@main.command(name="riscv-decode")
+@click.argument("words", nargs=-1, required=True)
+@click.option("--json", "as_json", is_flag=True)
+def riscv_decode(words: tuple[str, ...], as_json: bool) -> None:
+    """Decode RISC-V instruction word(s) to assembly (hex/bin/decimal).
+
+    Uses the bundled ISA — no dataset or cluster needed:
+
+        xevdb riscv-decode 0x00c58533 0x00450513
+    """
+    from . import decode as _decode
+    out = []
+    for tok in words:
+        try:
+            d = _decode.decode(_decode.parse_word(tok))
+        except ValueError as e:
+            raise click.ClickException(str(e))
+        out.append(d)
+        if not as_json:
+            click.echo(f"0x{d.word:08x}\t{d.asm}\t[{d.extension or '?'} "
+                       f"{d.format or '?'}]\t{d.description}")
+    if as_json:
+        click.echo(json.dumps([d.to_dict() for d in out], indent=2))
+
+
+@main.command()
+@click.argument("db_path", type=click.Path(exists=True, dir_okay=False))
+@click.argument("signal")
+@click.option("--time", "-t", "t", type=int, required=True,
+              help="Timestamp (decode the word in effect at-or-before t).")
+@click.option("--json", "as_json", is_flag=True)
+def decode(db_path: str, signal: str, t: int, as_json: bool) -> None:
+    """Decode the RISC-V instruction word carried by SIGNAL at time T.
+
+    Reads the value in effect at t off the waveform (e.g. an instruction-bus or
+    fetched-opcode signal) and disassembles it with the bundled ISA.
+    """
+    from . import decode as _decode
+    backend = _backend(db_path)
+    with backend.open(read_only=True) as con:
+        sig = backend.resolve_signal(con, signal)
+        if sig is None:
+            raise click.ClickException(f"signal not found or ambiguous: {signal!r}")
+        res = backend.value_at(con, sig.sig_id, t)
+    if res is None:
+        raise click.ClickException(f"{sig.fullname} has no value at-or-before t={t}")
+    last_t, value = res
+    try:
+        word = _decode.parse_word(value)
+    except ValueError as e:
+        raise click.ClickException(f"{sig.fullname}@{t} = {value!r}: {e}")
+    d = _decode.decode(word)
+    if as_json:
+        click.echo(json.dumps({"signal": sig.fullname, "time": t,
+                               "last_t": last_t, "value": value,
+                               **d.to_dict()}, indent=2))
+    else:
+        click.echo(f"{sig.fullname}\t@{t} (set @{last_t})\t0x{d.word:08x}\t"
+                   f"{d.asm}\t[{d.extension or '?'} {d.format or '?'}]")
+
+
 @main.command()
 @click.argument("db_path", type=click.Path(exists=True, dir_okay=False))
 def mcp(db_path: str) -> None:

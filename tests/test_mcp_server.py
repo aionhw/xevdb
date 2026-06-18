@@ -117,6 +117,23 @@ def test_tool_error_is_reported_not_raised(srv):
     assert "not found" in res["content"][0]["text"]
 
 
+def test_decode_instruction_tool(srv):
+    _res, payload = _call(srv, "decode_instruction", {"word": "0x00c58533"})
+    assert payload["name"] == "add" and payload["asm"] == "add a0, a1, a2"
+
+
+def test_decode_signal_tool(srv):
+    # smoke: reads a value off the waveform and returns a decoded structure
+    _res, payload = _call(srv, "decode_signal", {"signal": "count", "time": 25})
+    assert "asm" in payload and payload["signal"].endswith("count")
+
+
+def test_decode_tools_listed(srv):
+    resp = srv.handle({"jsonrpc": "2.0", "id": 8, "method": "tools/list"})
+    names = {t["name"] for t in resp["result"]["tools"]}
+    assert {"decode_instruction", "decode_signal"} <= names
+
+
 def test_unknown_tool(srv):
     resp = srv.handle({"jsonrpc": "2.0", "id": 7, "method": "tools/call",
                        "params": {"name": "frobnicate", "arguments": {}}})

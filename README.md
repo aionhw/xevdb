@@ -135,6 +135,8 @@ xevdb modules    <db> [--filter NAME] [--limit N] [--json]
 xevdb show       <db> <target> [--full] [--context N] [--no-line-numbers]
 xevdb ingest-riscv <ptr> [--reset]       # build the standalone RISC-V ISA reference (OpenSearch)
 xevdb ingest-kernel <ptr> [--kernel-tree DIR] [--reset]  # RISC-V Linux kernel arch (OpenSearch)
+xevdb riscv-decode <word>...             # decode instruction word(s) -> assembly (bundled ISA)
+xevdb decode <db> <signal> --time T      # decode the instruction word on a signal at time T
 ```
 
 ### X/Z tracing
@@ -383,6 +385,29 @@ Indices `xevdb-<dump_id>-kernel_{syscalls,traps,sbi,memmap}`. The RISC-V ISA and
 kernel reference can share one pointer/dataset (ISA + the software ABI on top of
 it) or live in separate ones. OpenSearch-only, same as the ISA reference.
 
+### Decode (ISA ↔ waveform)
+
+Turn a raw instruction word into assembly using the **bundled** ISA — no dataset
+or cluster needed (`(word & mask) == match` over the instruction table):
+
+```sh
+xevdb riscv-decode 0x00c58533 0x30529073
+# 0x00c58533   add a0, a1, a2          [RV32I R]   Register ALU op: rd = rs1 + rs2.
+# 0x30529073   csrrw zero, 0x305, t0   [Zicsr I]   Atomic read/write CSR ...
+```
+
+Or read the word straight off a waveform — point it at an instruction-bus /
+fetched-opcode signal and disassemble what was on it at time T:
+
+```sh
+xevdb decode cpu.xevdb fetch_insn --time 41200
+# top...fetch_insn  @41200 (set @41200)  0x00450513  addi a0, a0, 4  [RV32I I]
+```
+
+Both accept `--json`, and both are exposed to agents as the MCP tools
+`decode_instruction` / `decode_signal` — the bridge from a value in a trace to
+what it *means*. Handles 32-bit and 16-bit compressed words.
+
 ### Cache
 
 ```
@@ -508,9 +533,11 @@ Configure it in any MCP client (Claude Desktop, Claude Code, etc.):
 Tools exposed: `stats`, `find_signals`, `signal_value_at`, `signal_window`,
 `list_prompts`, `run_prompt` (the whole stored library — waveform/RTL/sim/bug
 and RISC-V/kernel decode, e.g. `run_prompt riscv_csr_by_addr {addr:"0x305"}`),
-`search_bugs`, and `show_source` (RTL, sqlite backend). One server serves one
-dataset — point separate servers at a dump and at the reference DB. Tool errors
-come back as content (the agent sees them), not as protocol failures.
+`search_bugs`, `show_source` (RTL, sqlite backend), and `decode_instruction` /
+`decode_signal` (disassemble an instruction word, or the word on a signal at
+time T). One server serves one dataset — point separate servers at a dump and at
+the reference DB. Tool errors come back as content (the agent sees them), not as
+protocol failures.
 
 ## Testing
 

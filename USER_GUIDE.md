@@ -401,6 +401,31 @@ encodings (`mask`/`match`). The bundled data is curated in
 `scripts/gen_riscv_data.py`; full walkthrough in
 [`docs/riscv-reference-tutorial.md`](docs/riscv-reference-tutorial.md).
 
+### Decoding instruction words
+
+The encodings power a **decoder** — turn a raw instruction word into assembly
+with `(word & mask) == match`. This uses the *bundled* ISA, so it needs **no
+dataset or cluster**:
+
+```sh
+xevdb riscv-decode 0x00c58533 0x30529073
+# 0x00c58533   add a0, a1, a2          [RV32I R]   Register ALU op: rd = rs1 + rs2.
+# 0x30529073   csrrw zero, 0x305, t0   [Zicsr I]   Atomic read/write CSR ...
+```
+
+Words can be hex (`0x…`), binary (`0b…`), or a bare VCD bit-string; 32-bit and
+16-bit compressed are both handled. The real payoff is reading the word straight
+off a **waveform** — point it at an instruction-bus or fetched-opcode signal:
+
+```sh
+xevdb decode cpu.xevdb fetch_insn --time 41200
+# top...fetch_insn  @41200 (set @41200)  0x00450513  addi a0, a0, 4  [RV32I I]
+```
+
+That's the bridge from a raw value in a trace to *what it means*. Both commands
+take `--json`, and both are MCP tools (`decode_instruction` / `decode_signal`,
+§14) so an agent can disassemble while it debugs.
+
 ---
 
 ## 12. The Linux kernel architecture reference
@@ -502,11 +527,12 @@ Register it in any MCP client (Claude Desktop / Claude Code / …):
 
 **Tools exposed:** `stats`, `find_signals`, `signal_value_at`, `signal_window`,
 `list_prompts`, `run_prompt` (the whole stored library — including RISC-V/kernel
-decode, e.g. `run_prompt riscv_csr_by_addr {addr:"0x305"}`), `search_bugs`, and
-`show_source` (RTL, sqlite backend). One server serves one dataset, so point
-separate servers at a dump and at the reference DB — the normal MCP multi-server
-pattern. Tool errors come back as content (the agent sees them), not as protocol
-failures.
+decode, e.g. `run_prompt riscv_csr_by_addr {addr:"0x305"}`), `search_bugs`,
+`show_source` (RTL, sqlite backend), and `decode_instruction` / `decode_signal`
+(disassemble a word, or the word on a signal — §11). One server serves one
+dataset, so point separate servers at a dump and at
+the reference DB — the normal MCP multi-server pattern. Tool errors come back as
+content (the agent sees them), not as protocol failures.
 
 The principle is **evidence-first**: the agent calls a tool, gets exact rows
 back, and reasons over *facts the tool proved* — it never has to recall a CSR
@@ -582,6 +608,8 @@ xevdb prompt run d.xevdb bugs_for_signal --arg signal=mem_axi_araddr
 xevdb prompt run riscv.ptr.json kernel_trap_by_code  --arg code=13 --arg kind=exception
 xevdb prompt run riscv.ptr.json riscv_csr_by_addr    --arg addr=0x305
 xevdb prompt run riscv.ptr.json kernel_syscall_by_nr --arg nr=64
+xevdb riscv-decode 0x00450513                        # a raw instruction word
+xevdb decode cpu.xevdb fetch_insn --time 41200       # the word on a signal at T
 ```
 
 **"Which signals never toggle?"** (tie-off / dead-logic hunt)
@@ -661,6 +689,9 @@ ingest-sim    <db> <log> [--name N] [--keep-all] [--reset]
 
 ingest-riscv  <ptr> [--data DIR] [--reset] [--no-seed]                       # OpenSearch
 ingest-kernel <ptr> [--kernel-tree DIR] [--data DIR] [--reset] [--no-seed]   # OpenSearch
+
+riscv-decode  <word>... [--json]                             # decode literal instruction word(s)
+decode        <db> <signal> --time T [--json]                # decode the word on a signal at T
 
 xz summary    <db> [--json]                                  # sqlite
 xz first      <db> [--limit N] [--json]                      # sqlite

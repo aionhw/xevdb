@@ -156,6 +156,26 @@ class XevdbMcp:
                     "code": _show.render(sl, with_lines=True)} for sl in slices]
         return {"target": target, "slices": out}
 
+    def t_decode_instruction(self, args: dict) -> Any:
+        from . import decode as _decode
+        word = _decode.parse_word(str(args["word"]))
+        return _decode.decode(word).to_dict()
+
+    def t_decode_signal(self, args: dict) -> Any:
+        from . import decode as _decode
+        signal, t = args["signal"], int(args["time"])
+        with self._session() as s:
+            sig = self.backend.resolve_signal(s, signal)
+            if sig is None:
+                raise ValueError(f"signal not found or ambiguous: {signal!r}")
+            res = self.backend.value_at(s, sig.sig_id, t)
+        if res is None:
+            raise ValueError(f"{sig.fullname} has no value at-or-before t={t}")
+        last_t, value = res
+        d = _decode.decode(_decode.parse_word(value))   # raises on x/z
+        return {"signal": sig.fullname, "time": t, "last_t": last_t,
+                "value": value, **d.to_dict()}
+
     # -- JSON-RPC dispatch (pure; unit-tested without stdio) ----------------
 
     def handle(self, msg: Any) -> dict | None:
@@ -287,6 +307,14 @@ def _build_tools(srv: "XevdbMcp") -> list[dict]:
         tool("search_bugs",
              "Full-text search the bug knowledge base.",
              srv.t_search_bugs, {"query": S, "status": S, "limit": I}, ["query"]),
+        tool("decode_instruction",
+             "Decode a RISC-V instruction word (hex/bin/decimal) to assembly "
+             "using the bundled ISA — e.g. '0x00c58533' -> 'add a0, a1, a2'.",
+             srv.t_decode_instruction, {"word": S}, ["word"]),
+        tool("decode_signal",
+             "Read the instruction word carried by a signal at time T off the "
+             "waveform and disassemble it.",
+             srv.t_decode_signal, {"signal": S, "time": I}, ["signal", "time"]),
         tool("show_source",
              "Show the RTL source for a module / signal / file:line "
              "(sqlite backend only).",
