@@ -122,7 +122,9 @@ xevdb stats examples/simple/counter.vcd.xevdb
 ```
 
 > Capturing transactions instead of raw signals? `xevdb build-xtrace cap.xtrace`
-> parses an XTrace capture into the same schema.
+> parses an XTrace capture into the same schema. Have an **FST** dump (Verilator /
+> GTKWave)? `xevdb build-fst sim.fst` converts it via `fst2vcd` and builds the same
+> way. And `xevdb diff golden.xevdb dut.xevdb` finds where two runs first diverge.
 
 ---
 
@@ -590,6 +592,13 @@ xevdb xz first     d.xevdb --limit 10       # earliest offenders
 xevdb xz propagate d.xevdb <top offender>   # what it poisoned
 ```
 
+**"It passed last week — where does it diverge from golden now?"**
+```sh
+xevdb build-fst golden.fst --db golden.xevdb --reset    # FST -> db (if needed)
+xevdb diff golden.xevdb dut.xevdb --signal '*reg_pc*'   # earliest divergence
+xevdb window dut.xevdb reg_pc --from <t-near> --to <t>  # zoom in on it
+```
+
 **"The sim printed an error — show me the RTL."**
 ```sh
 xevdb ingest-sim d.xevdb run.log
@@ -677,10 +686,12 @@ JSON pointer file routes to OpenSearch).
 ```
 build         <vcd> [--db PATH] [--reset] [--no-seed]
 build-xtrace  <xtrace> [--db PATH] [--reset] [--no-seed]
+build-fst     <fst> [--db PATH] [--reset] [--no-seed]        # FST via fst2vcd
 at            <db> <signal> --time T [--json]
 window        <db> <signal> [--from T0] [--to T1] [--limit N] [--json]
 find          <db> <pattern> [--limit N] [--json]
 stats         <db> [--json]
+diff          <golden> <dut> [--signal P] [--from T0] [--to T1] [--limit N] [--json]
 
 ingest-rtl    <db> <path> [--reset]
 modules       <db> [--filter NAME] [--limit N] [--json]      # sqlite

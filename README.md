@@ -121,10 +121,12 @@ the core's source straight from the database. See
 ```
 xevdb build  <vcd> [--db out.xevdb] [--reset] [--no-seed]
 xevdb build-xtrace <xtrace> [--db out.xevdb] [--reset] [--no-seed]
+xevdb build-fst <fst> [--db out.xevdb] [--reset] [--no-seed]   # FST via fst2vcd
 xevdb at     <db> <signal> --time <t>           [--json]
 xevdb window <db> <signal> --from <t0> --to <t1> [--limit N] [--json]
 xevdb find   <db> <pattern>                      [--limit N] [--json]
 xevdb stats  <db>                                [--json]
+xevdb diff   <golden> <dut> [--signal P] [--from T0] [--to T1] [--json]  # first divergence
 ```
 
 ### RTL commands
@@ -137,6 +139,33 @@ xevdb ingest-riscv <ptr> [--reset]       # build the standalone RISC-V ISA refer
 xevdb ingest-kernel <ptr> [--kernel-tree DIR] [--reset]  # RISC-V Linux kernel arch (OpenSearch)
 xevdb riscv-decode <word>...             # decode instruction word(s) -> assembly (bundled ISA)
 xevdb decode <db> <signal> --time T      # decode the instruction word on a signal at time T
+```
+
+### Waveform diff
+
+Golden-vs-DUT regression triage: for every signal common to two datasets
+(matched by fullname), report the earliest time their value-in-effect differs.
+
+```sh
+xevdb diff golden.xevdb dut.xevdb
+# 1 divergent signal(s) of 138 common (earliest first):
+#            t  A (golden)       B (dut)          signal
+#          120  00000004         000000xx         top.dut.reg_pc
+```
+
+Pure-binary vectors are compared by value (so `00000010` == `10`); `x`/`z` and
+reals compare raw. Scope it with `--signal <glob>` / `--from` / `--to`.
+Backend-agnostic (uses `window`); on OpenSearch it's bounded by the cluster's
+result window per signal.
+
+### FST input
+
+Most large dumps are FST (Verilator / GTKWave), not plain VCD. `build-fst`
+converts via `fst2vcd` (ships with Icarus Verilog and GTKWave; override with
+`$XEVDB_FST2VCD`) and builds the same database:
+
+```sh
+xevdb build-fst sim.fst --db sim.xevdb --reset
 ```
 
 ### X/Z tracing

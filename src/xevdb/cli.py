@@ -118,6 +118,33 @@ def build_xtrace(xtrace_path: str, db_path: str | None, reset: bool, no_seed: bo
     )
 
 
+@main.command(name="build-fst")
+@click.argument("fst_path", type=click.Path(exists=True, dir_okay=False))
+@click.option("--db", "db_path", type=click.Path(),
+              help="Output database path. Default: <fst_path>.xevdb")
+@click.option("--reset", is_flag=True, help="Replace any existing database.")
+@click.option("--no-seed", is_flag=True, help="Skip installing the standard prompt library.")
+def build_fst(fst_path: str, db_path: str | None, reset: bool, no_seed: bool) -> None:
+    """Convert an FST waveform to VCD (via fst2vcd) and build a database."""
+    import tempfile
+
+    from . import fst as _fst
+    if db_path is None:
+        db_path = _default_db_path(fst_path)
+    with tempfile.TemporaryDirectory() as tmp:
+        vcd = Path(tmp) / (Path(fst_path).stem + ".vcd")
+        try:
+            _fst.convert_to_vcd(fst_path, vcd)
+        except (FileNotFoundError, RuntimeError) as e:
+            raise click.ClickException(str(e))
+        result = _backend(db_path).build(str(vcd), reset=reset, seed=not no_seed)
+    click.echo(
+        f"built {db_path} from {fst_path}: "
+        f"{result['signals']} signals, {result['changes']} changes, "
+        f"t in [{result['t_min']}, {result['t_max']}]"
+    )
+
+
 @main.command()
 @click.argument("db_path", type=click.Path(exists=True, dir_okay=False))
 @click.argument("signal")
@@ -219,6 +246,49 @@ def stats(db_path: str, as_json: bool) -> None:
     click.echo("row_counts:")
     for k, v in info["row_counts"].items():
         click.echo(f"  {k:<18s}{v}")
+
+
+@main.command()
+@click.argument("db_a", type=click.Path(exists=True, dir_okay=False))
+@click.argument("db_b", type=click.Path(exists=True, dir_okay=False))
+@click.option("--signal", "pattern", default="*", show_default=True,
+              help="Only diff signals matching this glob/substring.")
+@click.option("--from", "t0", type=int, default=None)
+@click.option("--to", "t1", type=int, default=None)
+@click.option("--limit", type=int, default=50, show_default=True,
+              help="Max divergent signals to report (earliest first).")
+@click.option("--max-changes", type=int, default=100000, show_default=True,
+              help="Per-signal change cap walked when diffing.")
+@click.option("--json", "as_json", is_flag=True)
+def diff(db_a: str, db_b: str, pattern: str, t0: int | None, t1: int | None,
+         limit: int, max_changes: int, as_json: bool) -> None:
+    """Find where two datasets first diverge (golden A vs DUT B).
+
+    For every signal common to both (matched by fullname), report the earliest
+    time their value-in-effect differs — sorted earliest first.
+    """
+    from . import diff as _diff
+    ba, bb = _backend(db_a), _backend(db_b)
+    with ba.open(read_only=True) as ca, bb.open(read_only=True) as cb:
+        res = _diff.diff_datasets(ba, ca, bb, cb, pattern=pattern, t0=t0, t1=t1,
+                                  limit=limit, max_changes=max_changes)
+    if as_json:
+        out = {**res, "divergences": [d.to_dict() for d in res["divergences"]]}
+        click.echo(json.dumps(out, indent=2))
+        return
+    divs = res["divergences"]
+    if not divs:
+        click.echo(f"no divergences across {res['n_common']} common signal(s).")
+    else:
+        click.echo(f"{res['n_divergent']} divergent signal(s) of {res['n_common']} "
+                   f"common (earliest first):")
+        click.echo(f"  {'t':>10}  {'A (golden)':<16} {'B (dut)':<16} signal")
+        for d in divs:
+            click.echo(f"  {d.t:>10}  {str(d.value_a):<16} {str(d.value_b):<16} "
+                       f"{d.fullname}")
+    if res["only_in_a"] or res["only_in_b"]:
+        click.echo(f"(only in A: {len(res['only_in_a'])}, "
+                   f"only in B: {len(res['only_in_b'])})")
 
 
 @main.command(name="riscv-decode")
