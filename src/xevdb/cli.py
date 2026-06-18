@@ -221,6 +221,22 @@ def stats(db_path: str, as_json: bool) -> None:
         click.echo(f"  {k:<18s}{v}")
 
 
+@main.command()
+@click.argument("db_path", type=click.Path(exists=True, dir_okay=False))
+def mcp(db_path: str) -> None:
+    """Serve DB_PATH to AI agents over MCP (stdio).
+
+    Exposes the dataset's queries — values, windows, signal search, the stored
+    prompt library (waveform/RTL/sim/bug/RISC-V/kernel), and the bug KB — as MCP
+    tools. Configure it in an MCP client, e.g.:
+
+        {"mcpServers": {"xevdb": {"command": "xevdb",
+                                  "args": ["mcp", "/path/to/db.xevdb"]}}}
+    """
+    from . import mcp_server
+    mcp_server.serve(db_path, _BACKEND_NAME)
+
+
 # ----------------------------------------------------------------------------
 # RTL ingest + display
 # ----------------------------------------------------------------------------

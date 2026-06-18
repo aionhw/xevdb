@@ -455,11 +455,39 @@ CREATE TABLE cache   (key PK, prompt_name, args_json, result_json,
                       created_at, hits, last_hit_at, ttl_seconds);
 ```
 
+## MCP server (AI agents)
+
+`xevdb mcp <db>` serves one dataset to an AI agent over the **Model Context
+Protocol** (stdio, JSON-RPC) — so an agent queries the deterministic evidence
+directly instead of guessing. Zero extra dependencies (the protocol is built in).
+
+```sh
+xevdb mcp counter.vcd.xevdb       # a waveform dump
+xevdb mcp riscv.ptr.json          # or the RISC-V / kernel reference (OpenSearch)
+```
+
+Configure it in any MCP client (Claude Desktop, Claude Code, etc.):
+
+```json
+{
+  "mcpServers": {
+    "xevdb": { "command": "xevdb", "args": ["mcp", "/path/to/db.xevdb"] }
+  }
+}
+```
+
+Tools exposed: `stats`, `find_signals`, `signal_value_at`, `signal_window`,
+`list_prompts`, `run_prompt` (the whole stored library — waveform/RTL/sim/bug
+and RISC-V/kernel decode, e.g. `run_prompt riscv_csr_by_addr {addr:"0x305"}`),
+`search_bugs`, and `show_source` (RTL, sqlite backend). One server serves one
+dataset — point separate servers at a dump and at the reference DB. Tool errors
+come back as content (the agent sees them), not as protocol failures.
+
 ## Testing
 
 ```sh
 pip install -e '.[opensearch,dev]'    # pytest + ruff + opensearch-py
-pytest -q                             # 121 tests, no live cluster needed
+pytest -q                             # 134 tests, no live cluster needed
 ruff check src tests scripts
 ```
 

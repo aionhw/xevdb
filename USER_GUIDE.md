@@ -433,6 +433,8 @@ xz propagate <db> <seed> [--window W] [--limit N] [--json]
 
 prompt list/show/run/add/remove
 cache  stats/list/clear
+
+mcp    <db>                              # serve the dataset to AI agents over MCP (stdio)
 ```
 
 Every command takes `-h` / `--help`. `XEVDB_NO_CACHE=1` disables the
