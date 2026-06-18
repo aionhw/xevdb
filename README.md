@@ -36,10 +36,8 @@ queryable file you can hand to a teammate or pipe through `jq`.
 
 ```sh
 bash install.sh                   # venv + clone/build sv-parse + smoke-test
-# or, opt-in to an alternate backend for very large / shared dumps:
-bash install.sh --with-duckdb
-bash install.sh --with-opensearch # serve a dataset from an OpenSearch cluster
-
+bash install.sh --with-opensearch # opt-in: team-shared / large dumps + the
+                                  # RISC-V & kernel reference (OpenSearch backend)
 source .venv/bin/activate
 ```
 
@@ -255,6 +253,37 @@ and the cross-index joins — are SQLite-only and report so.
 | `sim_by_ref_file` | sim | Sim events whose embedded `file:line` ref matches a path. |
 | `xz_signals_with_rtl` | wave + rtl | Cross — VCD X/Z signals joined with their RTL declaration. |
 | `sim_with_rtl` | sim + rtl | Cross — sim events whose `ref_file:ref_line` lands in a parsed module. |
+
+**Bug KB, RISC-V, and kernel prompts (22):**
+
+| Name | Side | Purpose |
+| --- | --- | --- |
+| `bug_search` | bug | Full-text search the bug KB. |
+| `bugs_by_status` | bug | Bugs with a given status, newest first. |
+| `bugs_for_signal` | bug | Bugs linked to a signal. |
+| `bugs_for_module` | bug | Bugs linked to a module. |
+| `bugs_with_rtl` | bug + rtl | Bugs whose linked module exists in the RTL. |
+| `xz_signals_with_open_bugs` | bug + wave | X/Z signals that have an open bug. |
+| `riscv_instr_search` | riscv | Search instructions by mnemonic / syntax / description. |
+| `riscv_instr_by_name` | riscv | Exact instruction lookup (encoding + format). |
+| `riscv_by_extension` | riscv | Instructions in an extension (RV32I/M/A/F/D/C/…). |
+| `riscv_csr_lookup` | riscv | Find a CSR by name or description. |
+| `riscv_csr_by_addr` | riscv | Decode a CSR number (e.g. `0x305` → `mtvec`). |
+| `riscv_reg_lookup` | riscv | Resolve a register (`a0` → x10, caller-saved). |
+| `riscv_pseudo_search` | riscv | Pseudo-instruction → real expansion. |
+| `riscv_ext_overview` | riscv | Instruction count per extension. |
+| `kernel_syscall_by_nr` | kernel | Decode a syscall number (the `a7` value). |
+| `kernel_syscall_search` | kernel | Search syscalls by name / entry / description. |
+| `kernel_trap_by_code` | kernel | Decode an `scause`/`mcause` code. |
+| `kernel_trap_search` | kernel | Search trap causes. |
+| `kernel_sbi_search` | kernel | Search SBI extensions + functions. |
+| `kernel_sbi_functions` | kernel | Function IDs of one SBI extension. |
+| `kernel_memmap_lookup` | kernel | Search the VM layout / boot ABI. |
+| `kernel_memmap_by_mode` | kernel | VM-layout regions for a paging mode. |
+
+The bug prompts run on both backends; the `riscv_*`/`kernel_*` prompts are
+OpenSearch-only (they query the reference indices). See
+[USER_GUIDE](USER_GUIDE.md) §10–12 for worked examples.
 
 ### Bug knowledge base
 
