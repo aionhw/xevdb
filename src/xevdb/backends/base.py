@@ -64,6 +64,28 @@ class Backend(ABC):
                    keep_all: bool = False, reset: bool = False) -> dict[str, int]:
         """Parse a simulator log into the dataset."""
 
+    def ingest_riscv(self, data_dir: str | Path | None = None, *,
+                     reset: bool = False, seed: bool = True) -> dict[str, int]:
+        """Build/refresh the standalone RISC-V ISA reference indices.
+
+        Opensearch-only by design (a waveform-independent knowledge base). The
+        default raises; the OpenSearch backend overrides it.
+        """
+        raise NotImplementedError(
+            "the RISC-V ISA reference is an opensearch-only feature; run it with "
+            "`xevdb --backend opensearch ingest-riscv <pointer.json>`.")
+
+    def ingest_kernel(self, kernel_tree: str | Path | None = None, *,
+                      data_dir: str | Path | None = None,
+                      reset: bool = False, seed: bool = True) -> dict[str, int]:
+        """Build/refresh the standalone RISC-V Linux kernel architecture indices.
+
+        Opensearch-only by design; the OpenSearch backend overrides it.
+        """
+        raise NotImplementedError(
+            "the kernel architecture reference is an opensearch-only feature; run "
+            "it with `xevdb --backend opensearch ingest-kernel <pointer.json>`.")
+
     # -- sessions -----------------------------------------------------------
 
     @abstractmethod

@@ -18,7 +18,7 @@ Pure SQL over the existing schema; no new tables. Read-only.
 from __future__ import annotations
 
 from dataclasses import dataclass, asdict
-from typing import Any, Sequence
+from typing import Any
 
 # A value is X/Z-dirty if it carries any of these characters.
 _XZ_CHARS = ("x", "X", "z", "Z")

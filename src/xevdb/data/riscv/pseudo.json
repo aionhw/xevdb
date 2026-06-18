@@ -1,0 +1,153 @@
+{
+  "spec_version": "20240411",
+  "count": 21,
+  "pseudo": [
+    {
+      "id": "nop",
+      "name": "nop",
+      "expansion": "addi x0, x0, 0",
+      "base": "addi",
+      "description": "No operation."
+    },
+    {
+      "id": "li",
+      "name": "li",
+      "expansion": "lui/addi sequence",
+      "base": "addi",
+      "description": "Load immediate into rd."
+    },
+    {
+      "id": "mv",
+      "name": "mv",
+      "expansion": "addi rd, rs1, 0",
+      "base": "addi",
+      "description": "Copy register rs1 to rd."
+    },
+    {
+      "id": "not",
+      "name": "not",
+      "expansion": "xori rd, rs1, -1",
+      "base": "xori",
+      "description": "Bitwise NOT."
+    },
+    {
+      "id": "neg",
+      "name": "neg",
+      "expansion": "sub rd, x0, rs1",
+      "base": "sub",
+      "description": "Two's-complement negate."
+    },
+    {
+      "id": "seqz",
+      "name": "seqz",
+      "expansion": "sltiu rd, rs1, 1",
+      "base": "sltiu",
+      "description": "Set rd = (rs1 == 0)."
+    },
+    {
+      "id": "snez",
+      "name": "snez",
+      "expansion": "sltu rd, x0, rs1",
+      "base": "sltu",
+      "description": "Set rd = (rs1 != 0)."
+    },
+    {
+      "id": "j",
+      "name": "j",
+      "expansion": "jal x0, label",
+      "base": "jal",
+      "description": "Unconditional jump."
+    },
+    {
+      "id": "jr",
+      "name": "jr",
+      "expansion": "jalr x0, 0(rs1)",
+      "base": "jalr",
+      "description": "Jump to register."
+    },
+    {
+      "id": "ret",
+      "name": "ret",
+      "expansion": "jalr x0, 0(ra)",
+      "base": "jalr",
+      "description": "Return from subroutine."
+    },
+    {
+      "id": "call",
+      "name": "call",
+      "expansion": "auipc/jalr sequence",
+      "base": "jalr",
+      "description": "Call a far subroutine."
+    },
+    {
+      "id": "tail",
+      "name": "tail",
+      "expansion": "auipc/jalr sequence",
+      "base": "jalr",
+      "description": "Tail-call a far subroutine."
+    },
+    {
+      "id": "beqz",
+      "name": "beqz",
+      "expansion": "beq rs1, x0, label",
+      "base": "beq",
+      "description": "Branch if rs1 == 0."
+    },
+    {
+      "id": "bnez",
+      "name": "bnez",
+      "expansion": "bne rs1, x0, label",
+      "base": "bne",
+      "description": "Branch if rs1 != 0."
+    },
+    {
+      "id": "blez",
+      "name": "blez",
+      "expansion": "bge x0, rs1, label",
+      "base": "bge",
+      "description": "Branch if rs1 <= 0."
+    },
+    {
+      "id": "bgez",
+      "name": "bgez",
+      "expansion": "bge rs1, x0, label",
+      "base": "bge",
+      "description": "Branch if rs1 >= 0."
+    },
+    {
+      "id": "bltz",
+      "name": "bltz",
+      "expansion": "blt rs1, x0, label",
+      "base": "blt",
+      "description": "Branch if rs1 < 0."
+    },
+    {
+      "id": "bgtz",
+      "name": "bgtz",
+      "expansion": "blt x0, rs1, label",
+      "base": "blt",
+      "description": "Branch if rs1 > 0."
+    },
+    {
+      "id": "csrr",
+      "name": "csrr",
+      "expansion": "csrrs rd, csr, x0",
+      "base": "csrrs",
+      "description": "Read a CSR into rd."
+    },
+    {
+      "id": "csrw",
+      "name": "csrw",
+      "expansion": "csrrw x0, csr, rs1",
+      "base": "csrrw",
+      "description": "Write rs1 to a CSR."
+    },
+    {
+      "id": "fence",
+      "name": "fence",
+      "expansion": "fence iorw, iorw",
+      "base": "fence",
+      "description": "Full memory fence."
+    }
+  ]
+}

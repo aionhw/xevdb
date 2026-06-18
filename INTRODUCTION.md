@@ -212,3 +212,7 @@ deterministic, queryable core underneath.
 - `examples/simple/` — the 4-signal fixture used in Level 1.
 - `examples/c906_opensearch/` — the real-silicon OpenSearch walkthrough (Level 4).
 - `xevdb_ai_debug/` — the FPGA AI-debug MVP (Level 6).
+- `docs/riscv-reference-tutorial.md` / `docs/kernel-reference-tutorial.md` — a
+  standalone, searchable **RISC-V ISA + Linux kernel architecture** database on
+  OpenSearch (decode an instruction, register, CSR, syscall, or trap when reading
+  a RISC-V trace — by hand or from an AI agent).

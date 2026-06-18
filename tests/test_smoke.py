@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from xevdb import db, prompts, cache, show, sv
+from xevdb import db, prompts, show, sv
 
 
 REPO = Path(__file__).resolve().parents[1]

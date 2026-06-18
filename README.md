@@ -17,7 +17,7 @@ SystemVerilog parser (cloned + built by `install.sh`) so the same
   stays portable — the original RTL is not required after build)
 - **Simulator output** — UVM/iverilog/Questa log lines parsed into severity +
   simulation time + `file:line` ref columns (joinable with RTL modules)
-- A library of parameterized SQL prompts (20 seeded across the three sides)
+- A library of parameterized prompts (42 seeded — waveform/RTL/sim, the bug KB, and the RISC-V/kernel reference)
 - A per-database query-result cache
 
 ## Why
@@ -135,6 +135,8 @@ xevdb stats  <db>                                [--json]
 xevdb ingest-rtl <db> <path> [--reset]   # parse .v/.sv into the DB
 xevdb modules    <db> [--filter NAME] [--limit N] [--json]
 xevdb show       <db> <target> [--full] [--context N] [--no-line-numbers]
+xevdb ingest-riscv <ptr> [--reset]       # build the standalone RISC-V ISA reference (OpenSearch)
+xevdb ingest-kernel <ptr> [--kernel-tree DIR] [--reset]  # RISC-V Linux kernel arch (OpenSearch)
 ```
 
 ### X/Z tracing
@@ -222,7 +224,14 @@ xevdb prompt add    <db> <name> --sql "..." [--params-json "[...]"]
 xevdb prompt remove <db> <name>
 ```
 
-**Seeded prompts (20):**
+**42 prompts are seeded.** The waveform / RTL / sim core is below; the bug-KB
+prompts are in [Bug knowledge base](#bug-knowledge-base), and the RISC-V and
+kernel prompts in their reference sections. `xevdb prompt list <db>` shows them
+all. On the OpenSearch backend a prompt runs only if it carries a `dsl_json`
+(24 of 42 do today); the SQL-only ones — RTL `*_of_module`, the `sim_*` family,
+and the cross-index joins — are SQLite-only and report so.
+
+**Seeded prompts — waveform / RTL / sim core (20):**
 
 | Name | Side | Purpose |
 | --- | --- | --- |
@@ -278,6 +287,72 @@ xevdb bug add picorv32.xevdb "axi-fifo-xprop" --severity error \
   --signal testbench.top.mem_axi_araddr --ref picorv32.v:176
 xevdb bug search picorv32.xevdb "uninitialized reset"
 ```
+
+### RISC-V ISA reference (OpenSearch only)
+
+A standalone, **waveform-independent** knowledge base of the RISC-V ISA —
+instructions (IMAFDC + Zicsr + Zifencei, with encodings), the register file
+(x0–x31 / f0–f31 + ABI names), control/status registers, extensions, and
+pseudo-instructions. It's its own xevdb dataset (its own pointer file), built
+once and queried forever; it does not need a VCD. The bundled data is generated
+by `scripts/gen_riscv_data.py` and ships with the package, so ingest needs no
+network.
+
+Step-by-step walkthrough: [`docs/riscv-reference-tutorial.md`](docs/riscv-reference-tutorial.md).
+
+```sh
+export XEVDB_OPENSEARCH_HOSTS=localhost:9200
+# build the reference DB into a fresh pointer (no waveform required)
+xevdb --backend opensearch ingest-riscv riscv.ptr.json --reset
+```
+
+Search it with the seeded `riscv_*` prompts:
+
+```sh
+xevdb prompt run riscv.ptr.json riscv_instr_by_name  --arg name=jalr     # encoding + format
+xevdb prompt run riscv.ptr.json riscv_instr_search   --arg query=jump    # full-text
+xevdb prompt run riscv.ptr.json riscv_by_extension   --arg extension=M   # all M instructions
+xevdb prompt run riscv.ptr.json riscv_csr_by_addr    --arg addr=0x305    # decode a CSR number -> mtvec
+xevdb prompt run riscv.ptr.json riscv_csr_lookup     --arg query=trap    # CSRs by name/description
+xevdb prompt run riscv.ptr.json riscv_reg_lookup     --arg query=a0      # a0 -> x10, caller-saved
+xevdb prompt run riscv.ptr.json riscv_pseudo_search  --arg query=ret     # ret -> jalr x0, 0(ra)
+xevdb prompt run riscv.ptr.json riscv_ext_overview                       # instruction count per extension
+```
+
+Indices `xevdb-<dump_id>-riscv_{instructions,registers,csrs,extensions,pseudo}`.
+After re-ingesting changed data, `xevdb cache clear riscv.ptr.json` so stale
+results aren't served. RISC-V ingest/search is OpenSearch-only; the SQLite
+backend fails fast with a clear message.
+
+### RISC-V Linux kernel architecture (OpenSearch only)
+
+A companion knowledge base, **parsed from a real kernel source tree** (only the
+architecture/ABI surfaces — no driver/internals): the **syscall table** (number
+in `a7` → name + `sys_*` entry), **trap causes** (scause/mcause exception +
+interrupt codes), the **SBI** S↔M ABI (extension IDs + function IDs), and the
+**virtual-memory layout** (Sv39/Sv48/Sv57) + boot register ABI. The bundled
+snapshot ships with the package; `--kernel-tree` re-parses any `linux/` checkout
+(regenerate with `scripts/gen_kernel_data.py`).
+
+```sh
+xevdb --backend opensearch ingest-kernel kernel.ptr.json --reset            # bundled snapshot
+xevdb --backend opensearch ingest-kernel kernel.ptr.json --kernel-tree ~/linux --reset
+```
+
+```sh
+xevdb prompt run kernel.ptr.json kernel_syscall_by_nr  --arg nr=64                      # a7=64 -> write
+xevdb prompt run kernel.ptr.json kernel_syscall_search --arg query=openat
+xevdb prompt run kernel.ptr.json kernel_trap_by_code   --arg code=13 --arg kind=exception  # -> load page fault
+xevdb prompt run kernel.ptr.json kernel_trap_search    --arg query=page
+xevdb prompt run kernel.ptr.json kernel_sbi_functions  --arg extension=HSM              # hart start/stop/...
+xevdb prompt run kernel.ptr.json kernel_sbi_search     --arg query=timer
+xevdb prompt run kernel.ptr.json kernel_memmap_by_mode --arg mode=Sv39                  # VM layout
+xevdb prompt run kernel.ptr.json kernel_memmap_lookup  --arg query=vmalloc
+```
+
+Indices `xevdb-<dump_id>-kernel_{syscalls,traps,sbi,memmap}`. The RISC-V ISA and
+kernel reference can share one pointer/dataset (ISA + the software ABI on top of
+it) or live in separate ones. OpenSearch-only, same as the ISA reference.
 
 ### Cache
 
@@ -379,6 +454,19 @@ CREATE TABLE prompts (name PK, description, sql, dsl_json, params_json,
 CREATE TABLE cache   (key PK, prompt_name, args_json, result_json,
                       created_at, hits, last_hit_at, ttl_seconds);
 ```
+
+## Testing
+
+```sh
+pip install -e '.[opensearch,dev]'    # pytest + ruff + opensearch-py
+pytest -q                             # 121 tests, no live cluster needed
+ruff check src tests scripts
+```
+
+The OpenSearch backend is exercised against an in-memory fake client, so the
+suite runs offline. The one live-cluster test in `tests/test_opensearch_integration.py`
+is skipped unless `XEVDB_OPENSEARCH_TEST_HOST` is set. CI runs `pytest` + `ruff`
+on every push (`.github/workflows/ci.yml`).
 
 ## Relationship to vcdb and trudbg
 

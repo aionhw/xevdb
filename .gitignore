@@ -25,3 +25,6 @@ examples/**/*.xevdb
 # xevdb_ai_debug generated artifacts
 xevdb_ai_debug/examples/*.xtrace
 xevdb_ai_debug/examples/debug_state.json
+
+# Heavy derived tutorial video (regenerate from the .cast with agg+ffmpeg)
+docs/*.mp4

@@ -1,0 +1,69 @@
+{
+  "spec_version": "20240411",
+  "count": 9,
+  "extensions": [
+    {
+      "id": "I",
+      "letter": "I",
+      "name": "Base Integer Instruction Set",
+      "version": "2.1",
+      "description": "Loads/stores, integer ALU, branches, jumps \u2014 the mandatory base."
+    },
+    {
+      "id": "M",
+      "letter": "M",
+      "name": "Integer Multiplication and Division",
+      "version": "2.0",
+      "description": "mul/mulh/div/rem family."
+    },
+    {
+      "id": "A",
+      "letter": "A",
+      "name": "Atomic Instructions",
+      "version": "2.1",
+      "description": "Load-reserved/store-conditional and atomic memory operations."
+    },
+    {
+      "id": "F",
+      "letter": "F",
+      "name": "Single-Precision Floating-Point",
+      "version": "2.2",
+      "description": "32-bit IEEE-754 float register file and ops."
+    },
+    {
+      "id": "D",
+      "letter": "D",
+      "name": "Double-Precision Floating-Point",
+      "version": "2.2",
+      "description": "64-bit IEEE-754 float, extends F."
+    },
+    {
+      "id": "C",
+      "letter": "C",
+      "name": "Compressed Instructions",
+      "version": "2.0",
+      "description": "16-bit encodings for common instructions to cut code size."
+    },
+    {
+      "id": "Zicsr",
+      "letter": "Zicsr",
+      "name": "Control and Status Register Access",
+      "version": "2.0",
+      "description": "csrrw/csrrs/csrrc and immediate forms."
+    },
+    {
+      "id": "Zifencei",
+      "letter": "Zifencei",
+      "name": "Instruction-Fetch Fence",
+      "version": "2.0",
+      "description": "fence.i to synchronize instruction and data streams."
+    },
+    {
+      "id": "G",
+      "letter": "G",
+      "name": "General-purpose (IMAFD + Zicsr + Zifencei)",
+      "version": "\u2014",
+      "description": "Shorthand for the common general-purpose ISA bundle."
+    }
+  ]
+}

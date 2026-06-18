@@ -22,14 +22,11 @@ Cache inspection (cache table inside the .xevdb):
 from __future__ import annotations
 
 import json
-import sys
 from pathlib import Path
 
 import click
 
 from . import db as _db
-from . import prompts as _prompts
-from . import cache as _cache
 from . import show as _show
 from . import sv as _sv
 from . import xztrace as _xz
@@ -275,6 +272,54 @@ def ingest_rtl_cmd(db_path: str, rtl_path: str, reset: bool) -> None:
         f"{result['modules']} modules, {result['ports']} ports, "
         f"{result['signals']} internal signals, {result['instances']} instantiations"
     )
+
+
+@main.command(name="ingest-riscv")
+@click.argument("db_path", type=click.Path())
+@click.option("--data", "data_dir", type=click.Path(exists=True, file_okay=False),
+              default=None,
+              help="Directory of RISC-V reference JSON. Default: bundled data.")
+@click.option("--reset", is_flag=True,
+              help="Drop existing riscv_* indices before ingesting.")
+@click.option("--no-seed", is_flag=True,
+              help="Skip installing the standard prompt library.")
+def ingest_riscv_cmd(db_path: str, data_dir: str | None, reset: bool,
+                     no_seed: bool) -> None:
+    """Build a standalone RISC-V ISA reference database (OpenSearch only).
+
+    DB_PATH is an opensearch pointer file. It need not exist yet — pass
+    `--backend opensearch` to synthesize one (cluster from
+    $XEVDB_OPENSEARCH_HOSTS). The reference is independent of any waveform dump.
+    """
+    result = _backend(db_path).ingest_riscv(
+        data_dir, reset=reset, seed=not no_seed)
+    summary = ", ".join(f"{v} {k}" for k, v in result.items())
+    click.echo(f"ingested RISC-V ISA reference into {db_path}: {summary}")
+
+
+@main.command(name="ingest-kernel")
+@click.argument("db_path", type=click.Path())
+@click.option("--kernel-tree", type=click.Path(exists=True, file_okay=False),
+              default=None,
+              help="Parse this linux/ checkout instead of the bundled snapshot.")
+@click.option("--data", "data_dir", type=click.Path(exists=True, file_okay=False),
+              default=None, help="Directory of pre-generated kernel JSON.")
+@click.option("--reset", is_flag=True,
+              help="Drop existing kernel_* indices before ingesting.")
+@click.option("--no-seed", is_flag=True,
+              help="Skip installing the standard prompt library.")
+def ingest_kernel_cmd(db_path: str, kernel_tree: str | None, data_dir: str | None,
+                      reset: bool, no_seed: bool) -> None:
+    """Build a RISC-V Linux kernel architecture database (OpenSearch only).
+
+    Parses syscalls, trap causes, the SBI ABI, and the VM layout / boot ABI.
+    With --kernel-tree it reads a real linux/ checkout; otherwise it uses the
+    bundled snapshot. Independent of any waveform dump.
+    """
+    result = _backend(db_path).ingest_kernel(
+        kernel_tree, data_dir=data_dir, reset=reset, seed=not no_seed)
+    summary = ", ".join(f"{v} {k}" for k, v in result.items())
+    click.echo(f"ingested kernel architecture into {db_path}: {summary}")
 
 
 @main.command()

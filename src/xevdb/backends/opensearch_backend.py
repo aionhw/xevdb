@@ -250,6 +250,85 @@ class OpenSearchBackend(Backend):
             "warning": sum(counts.get(s, 0) for s in ("WARNING", "UVM_WARNING")),
         }
 
+    # -- RISC-V ISA reference (standalone knowledge base) ------------------
+
+    def ingest_riscv(self, data_dir: str | Path | None = None, *,
+                     reset: bool = False, seed: bool = True) -> dict[str, int]:
+        """Build/refresh the standalone RISC-V ISA reference dataset.
+
+        Unlike build/ingest_rtl this needs no waveform: it loads the bundled
+        (or ``data_dir``-supplied) ISA JSON into the ``riscv_*`` indices of this
+        pointer's dataset. ``--reset`` wipes only the RISC-V tables.
+        """
+        from .. import riscv as _riscv
+        from .. import seed_prompts as _seed
+
+        rv = _riscv.load(data_dir)
+        now = time.time()
+        ptr = self._pointer(create=True)
+        client = self._client(ptr)
+        try:
+            if reset:
+                self._reset_indices(client, ptr, schema.RISCV_TABLES)
+            self._ensure_indices(
+                client, ptr, schema.RISCV_TABLES + ("meta", "prompts", "cache"))
+            actions = list(docs.riscv_actions(rv, now=now))
+            if seed:
+                actions += list(docs.prompt_actions(_seed.PROMPTS, now=now))
+            counts = rv.counts()
+            meta = {
+                "riscv_spec_version": rv.spec_version,
+                "riscv_source": str(data_dir) if data_dir else "bundled",
+                **{f"n_riscv_{k}": str(v) for k, v in counts.items()},
+                "xevdb_version": "0.1.0",
+            }
+            actions += [docs.Action("meta", k, {"key": k, "value": v})
+                        for k, v in meta.items()]
+            self._bulk(client, ptr, actions)
+        finally:
+            client.close()
+        return counts
+
+    def ingest_kernel(self, kernel_tree: str | Path | None = None, *,
+                      data_dir: str | Path | None = None,
+                      reset: bool = False, seed: bool = True) -> dict[str, int]:
+        """Build/refresh the standalone RISC-V Linux kernel architecture dataset.
+
+        With ``kernel_tree`` the four datasets are parsed live from that linux/
+        checkout; otherwise the bundled snapshot (or ``data_dir`` JSON) is used.
+        ``--reset`` wipes only the kernel_* tables. Waveform-independent.
+        """
+        from .. import kernel as _kernel
+        from .. import seed_prompts as _seed
+
+        kd = (_kernel.parse_tree(kernel_tree) if kernel_tree
+              else _kernel.load(data_dir))
+        now = time.time()
+        ptr = self._pointer(create=True)
+        client = self._client(ptr)
+        try:
+            if reset:
+                self._reset_indices(client, ptr, schema.KERNEL_TABLES)
+            self._ensure_indices(
+                client, ptr, schema.KERNEL_TABLES + ("meta", "prompts", "cache"))
+            actions = list(docs.kernel_actions(kd, now=now))
+            if seed:
+                actions += list(docs.prompt_actions(_seed.PROMPTS, now=now))
+            counts = kd.counts()
+            meta = {
+                "kernel_version": kd.kernel_version,
+                "kernel_source": str(kernel_tree) if kernel_tree else (
+                    str(data_dir) if data_dir else "bundled"),
+                **{f"n_kernel_{k}": str(v) for k, v in counts.items()},
+                "xevdb_version": "0.1.0",
+            }
+            actions += [docs.Action("meta", k, {"key": k, "value": v})
+                        for k, v in meta.items()]
+            self._bulk(client, ptr, actions)
+        finally:
+            client.close()
+        return counts
+
     # -- read path: stats (Phase 4) ----------------------------------------
 
     def stats(self, session: OpenSearch) -> dict[str, Any]:

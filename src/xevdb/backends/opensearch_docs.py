@@ -176,6 +176,58 @@ def prompt_actions(seed_prompts: Iterable[Any], *, now: float = 0.0) -> Iterator
         })
 
 
+# ----------------------------------------------------------------------------
+# RISC-V ISA reference (standalone knowledge base)
+# ----------------------------------------------------------------------------
+
+def riscv_actions(data: Any, *, now: float = 0.0) -> Iterator[Action]:
+    """Yield Action tuples for a parsed RISC-V reference (``riscv.RiscvData``).
+
+    One document per instruction / register / CSR / extension / pseudo, keyed by
+    its stable ``id`` so re-ingest is idempotent. ``ingested_at`` is stamped on
+    every doc for provenance.
+    """
+    from dataclasses import asdict
+
+    groups = (
+        ("riscv_instructions", data.instructions),
+        ("riscv_registers", data.registers),
+        ("riscv_csrs", data.csrs),
+        ("riscv_extensions", data.extensions),
+        ("riscv_pseudo", data.pseudo),
+    )
+    for table, rows in groups:
+        for row in rows:
+            doc = asdict(row)
+            doc["ingested_at"] = now
+            yield Action(table, doc["id"], doc)
+
+
+# ----------------------------------------------------------------------------
+# RISC-V Linux kernel architecture (standalone knowledge base)
+# ----------------------------------------------------------------------------
+
+def kernel_actions(data: Any, *, now: float = 0.0) -> Iterator[Action]:
+    """Yield Action tuples for parsed kernel data (``kernel.KernelData``).
+
+    One document per syscall / trap cause / SBI call / memory region, keyed by
+    its stable ``id``. ``ingested_at`` stamped for provenance.
+    """
+    from dataclasses import asdict
+
+    groups = (
+        ("kernel_syscalls", data.syscalls),
+        ("kernel_traps", data.traps),
+        ("kernel_sbi", data.sbi),
+        ("kernel_memmap", data.memmap),
+    )
+    for table, rows in groups:
+        for row in rows:
+            doc = asdict(row)
+            doc["ingested_at"] = now
+            yield Action(table, doc["id"], doc)
+
+
 def _json(obj: Any) -> str:
     import json
     return json.dumps(obj)

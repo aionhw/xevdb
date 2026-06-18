@@ -25,6 +25,15 @@ xevdb = "xevdb.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+xevdb = ["data/riscv/*.json", "data/kernel/*.json"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py310"
+
+[tool.ruff.lint]
+# Default E/F rules, minus a few stylistic ones the codebase uses on purpose:
+# compact one-line guards in the in-memory query evaluators (E70x) and short
+# loop/lambda names like `l`/`f` in those same helpers (E741/E743/E731).
+ignore = ["E702", "E731", "E741", "E743"]

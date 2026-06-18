@@ -450,6 +450,248 @@ PROMPTS: list[SeedPrompt] = [
         ),
         params=[{"name": "limit", "default": 100, "type": "int"}],
     ),
+
+    # ---------- RISC-V ISA reference (opensearch-only knowledge base) -------
+    # These run on the standalone riscv reference dataset built by
+    # `xevdb ingest-riscv`. The `dsl` is what executes on OpenSearch; the `sql`
+    # mirrors it for a future SQLite port (the riscv_* tables are OS-only today).
+    SeedPrompt(
+        name="riscv_instr_search",
+        description="Search RISC-V instructions by mnemonic, syntax, or description.",
+        sql=(
+            "SELECT name, extension, format, syntax, description "
+            "FROM riscv_instructions "
+            "WHERE name LIKE '%'||:query||'%' OR description LIKE '%'||:query||'%' "
+            "   OR syntax LIKE '%'||:query||'%' ORDER BY name LIMIT :limit"
+        ),
+        params=[
+            {"name": "query", "default": "", "type": "str"},
+            {"name": "limit", "default": 50, "type": "int"},
+        ],
+        dsl='{"index": "riscv_instructions", "body": {"size": ":limit", '
+            '"query": {"multi_match": {"query": ":query", "fields": '
+            '["name", "mnemonic", "description", "syntax", "operands"]}}}}',
+    ),
+    SeedPrompt(
+        name="riscv_instr_by_name",
+        description="Exact RISC-V instruction lookup (encoding + format) by mnemonic.",
+        sql=(
+            "SELECT name, extension, format, mask, match, syntax, description "
+            "FROM riscv_instructions WHERE name = :name LIMIT :limit"
+        ),
+        params=[
+            {"name": "name", "default": "", "type": "str"},
+            {"name": "limit", "default": 5, "type": "int"},
+        ],
+        dsl='{"index": "riscv_instructions", "body": {"size": ":limit", '
+            '"query": {"term": {"name": ":name"}}}}',
+    ),
+    SeedPrompt(
+        name="riscv_by_extension",
+        description="List the instructions defined by an ISA extension "
+                    "(RV32I/RV64I/M/A/F/D/C/Zicsr/...).",
+        sql=(
+            "SELECT name, format, syntax, description FROM riscv_instructions "
+            "WHERE extension = :extension ORDER BY name LIMIT :limit"
+        ),
+        params=[
+            {"name": "extension", "default": "RV32I", "type": "str"},
+            {"name": "limit", "default": 100, "type": "int"},
+        ],
+        dsl='{"index": "riscv_instructions", "body": {"size": ":limit", '
+            '"query": {"term": {"extension": ":extension"}}, '
+            '"sort": [{"name": "asc"}]}}',
+    ),
+    SeedPrompt(
+        name="riscv_csr_lookup",
+        description="Find a control/status register by name or description.",
+        sql=(
+            "SELECT addr, name, privilege, access, description FROM riscv_csrs "
+            "WHERE name LIKE '%'||:query||'%' OR description LIKE '%'||:query||'%' "
+            "ORDER BY addr LIMIT :limit"
+        ),
+        params=[
+            {"name": "query", "default": "", "type": "str"},
+            {"name": "limit", "default": 50, "type": "int"},
+        ],
+        dsl='{"index": "riscv_csrs", "body": {"size": ":limit", '
+            '"query": {"multi_match": {"query": ":query", '
+            '"fields": ["name", "description"]}}}}',
+    ),
+    SeedPrompt(
+        name="riscv_csr_by_addr",
+        description="Decode a CSR number (e.g. 0x305 seen in csrr/csrw) to its name.",
+        sql=(
+            "SELECT addr, name, privilege, access, description FROM riscv_csrs "
+            "WHERE addr = :addr LIMIT :limit"
+        ),
+        params=[
+            {"name": "addr", "default": "0x300", "type": "str"},
+            {"name": "limit", "default": 5, "type": "int"},
+        ],
+        dsl='{"index": "riscv_csrs", "body": {"size": ":limit", '
+            '"query": {"term": {"addr": ":addr"}}}}',
+    ),
+    SeedPrompt(
+        name="riscv_reg_lookup",
+        description="Resolve a register by x-name or ABI name (e.g. a0 -> x10, "
+                    "caller-saved).",
+        sql=(
+            'SELECT name, abi, number, "group", role, saver FROM riscv_registers '
+            "WHERE name = :query OR abi = :query OR role LIKE '%'||:query||'%' "
+            "ORDER BY number LIMIT :limit"
+        ),
+        params=[
+            {"name": "query", "default": "a0", "type": "str"},
+            {"name": "limit", "default": 10, "type": "int"},
+        ],
+        dsl='{"index": "riscv_registers", "body": {"size": ":limit", '
+            '"query": {"bool": {"should": [{"term": {"name": ":query"}}, '
+            '{"term": {"abi": ":query"}}, {"match": {"role": ":query"}}], '
+            '"minimum_should_match": 1}}, "sort": [{"number": "asc"}]}}',
+    ),
+    SeedPrompt(
+        name="riscv_pseudo_search",
+        description="Search pseudo-instructions and their real-instruction expansion.",
+        sql=(
+            "SELECT name, expansion, base, description FROM riscv_pseudo "
+            "WHERE name LIKE '%'||:query||'%' OR expansion LIKE '%'||:query||'%' "
+            "   OR description LIKE '%'||:query||'%' ORDER BY name LIMIT :limit"
+        ),
+        params=[
+            {"name": "query", "default": "", "type": "str"},
+            {"name": "limit", "default": 50, "type": "int"},
+        ],
+        dsl='{"index": "riscv_pseudo", "body": {"size": ":limit", '
+            '"query": {"multi_match": {"query": ":query", '
+            '"fields": ["name", "expansion", "base", "description"]}}}}',
+    ),
+    SeedPrompt(
+        name="riscv_ext_overview",
+        description="Instruction count per ISA extension (overview).",
+        sql=(
+            "SELECT extension, COUNT(*) AS instructions FROM riscv_instructions "
+            "GROUP BY extension ORDER BY instructions DESC LIMIT :limit"
+        ),
+        params=[{"name": "limit", "default": 50, "type": "int"}],
+        dsl='{"index": "riscv_instructions", "rows": "aggs:exts", '
+            '"body": {"size": 0, "aggs": {"exts": {"terms": '
+            '{"field": "extension", "size": ":limit"}}}}}',
+    ),
+
+    # ---------- RISC-V Linux kernel architecture (opensearch-only) ----------
+    # Built by `xevdb ingest-kernel`. dsl runs on OpenSearch; sql mirrors it.
+    SeedPrompt(
+        name="kernel_syscall_by_nr",
+        description="Decode a syscall number (the value in a7 at an ecall) to its name.",
+        sql=("SELECT nr, name, entry, abi, description FROM kernel_syscalls "
+             "WHERE nr = :nr LIMIT :limit"),
+        params=[
+            {"name": "nr", "default": 64, "type": "int"},
+            {"name": "limit", "default": 5, "type": "int"},
+        ],
+        dsl='{"index": "kernel_syscalls", "body": {"size": ":limit", '
+            '"query": {"term": {"nr": ":nr"}}}}',
+    ),
+    SeedPrompt(
+        name="kernel_syscall_search",
+        description="Search Linux syscalls by name, entry symbol, or description.",
+        sql=("SELECT nr, name, entry, description FROM kernel_syscalls "
+             "WHERE name LIKE '%'||:query||'%' OR description LIKE '%'||:query||'%' "
+             "ORDER BY nr LIMIT :limit"),
+        params=[
+            {"name": "query", "default": "", "type": "str"},
+            {"name": "limit", "default": 50, "type": "int"},
+        ],
+        dsl='{"index": "kernel_syscalls", "body": {"size": ":limit", '
+            '"query": {"multi_match": {"query": ":query", '
+            '"fields": ["name", "entry", "description"]}}}}',
+    ),
+    SeedPrompt(
+        name="kernel_trap_by_code",
+        description="Decode an scause/mcause code to its trap cause "
+                    "(kind = exception or interrupt).",
+        sql=("SELECT code, kind, name, label, description FROM kernel_traps "
+             "WHERE code = :code AND kind = :kind LIMIT :limit"),
+        params=[
+            {"name": "code", "default": 8, "type": "int"},
+            {"name": "kind", "default": "exception", "type": "str"},
+            {"name": "limit", "default": 5, "type": "int"},
+        ],
+        dsl='{"index": "kernel_traps", "body": {"size": ":limit", '
+            '"query": {"bool": {"filter": [{"term": {"code": ":code"}}, '
+            '{"term": {"kind": ":kind"}}]}}}}',
+    ),
+    SeedPrompt(
+        name="kernel_trap_search",
+        description="Search trap causes (exceptions + interrupts) by name or text.",
+        sql=("SELECT code, kind, name, label, description FROM kernel_traps "
+             "WHERE name LIKE '%'||:query||'%' OR label LIKE '%'||:query||'%' "
+             "   OR description LIKE '%'||:query||'%' ORDER BY kind, code LIMIT :limit"),
+        params=[
+            {"name": "query", "default": "", "type": "str"},
+            {"name": "limit", "default": 50, "type": "int"},
+        ],
+        dsl='{"index": "kernel_traps", "body": {"size": ":limit", '
+            '"query": {"multi_match": {"query": ":query", '
+            '"fields": ["name", "label", "description"]}}}}',
+    ),
+    SeedPrompt(
+        name="kernel_sbi_search",
+        description="Search SBI extensions and functions (the S<->M ABI).",
+        sql=("SELECT kind, extension, name, eid, fid, description FROM kernel_sbi "
+             "WHERE name LIKE '%'||:query||'%' OR extension LIKE '%'||:query||'%' "
+             "   OR description LIKE '%'||:query||'%' LIMIT :limit"),
+        params=[
+            {"name": "query", "default": "", "type": "str"},
+            {"name": "limit", "default": 50, "type": "int"},
+        ],
+        dsl='{"index": "kernel_sbi", "body": {"size": ":limit", '
+            '"query": {"multi_match": {"query": ":query", '
+            '"fields": ["name", "extension", "description"]}}}}',
+    ),
+    SeedPrompt(
+        name="kernel_sbi_functions",
+        description="List the function IDs of one SBI extension (e.g. HSM, TIME, RFENCE).",
+        sql=("SELECT name, fid, description FROM kernel_sbi "
+             "WHERE extension = :extension AND kind = 'function' "
+             "ORDER BY fid LIMIT :limit"),
+        params=[
+            {"name": "extension", "default": "HSM", "type": "str"},
+            {"name": "limit", "default": 50, "type": "int"},
+        ],
+        dsl='{"index": "kernel_sbi", "body": {"size": ":limit", '
+            '"query": {"bool": {"filter": [{"term": {"extension": ":extension"}}, '
+            '{"term": {"kind": "function"}}]}}, "sort": [{"fid": "asc"}]}}',
+    ),
+    SeedPrompt(
+        name="kernel_memmap_lookup",
+        description="Search the kernel virtual-memory layout / boot ABI by name or text.",
+        sql=("SELECT mode, region, start, end, size, description FROM kernel_memmap "
+             "WHERE region LIKE '%'||:query||'%' OR description LIKE '%'||:query||'%' "
+             "LIMIT :limit"),
+        params=[
+            {"name": "query", "default": "", "type": "str"},
+            {"name": "limit", "default": 50, "type": "int"},
+        ],
+        dsl='{"index": "kernel_memmap", "body": {"size": ":limit", '
+            '"query": {"multi_match": {"query": ":query", '
+            '"fields": ["region", "description", "mode"]}}}}',
+    ),
+    SeedPrompt(
+        name="kernel_memmap_by_mode",
+        description="List the VM-layout regions for a paging mode (Sv39/Sv48/Sv57).",
+        sql=("SELECT region, start, end, size, description FROM kernel_memmap "
+             "WHERE mode = :mode AND category = 'vm-layout' "
+             "ORDER BY start LIMIT :limit"),
+        params=[
+            {"name": "mode", "default": "Sv39", "type": "str"},
+            {"name": "limit", "default": 50, "type": "int"},
+        ],
+        dsl='{"index": "kernel_memmap", "body": {"size": ":limit", '
+            '"query": {"bool": {"filter": [{"term": {"mode": ":mode"}}, '
+            '{"term": {"category": "vm-layout"}}]}}, "sort": [{"start": "asc"}]}}',
+    ),
 ]
 
 

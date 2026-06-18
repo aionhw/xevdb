@@ -1,0 +1,326 @@
+{
+  "kernel_version": "v6.12",
+  "count": 32,
+  "memmap": [
+    {
+      "id": "vm:Sv39:0000000000000000",
+      "category": "vm-layout",
+      "mode": "Sv39",
+      "region": "user-space",
+      "start": "0x0000000000000000",
+      "end": "0x0000003fffffffff",
+      "size": "256 GB",
+      "description": "user-space virtual memory, different per mm"
+    },
+    {
+      "id": "vm:Sv39:0000004000000000",
+      "category": "vm-layout",
+      "mode": "Sv39",
+      "region": "...",
+      "start": "0x0000004000000000",
+      "end": "0xffffffbfffffffff",
+      "size": "~16M TB",
+      "description": "... huge, almost 64 bits wide hole of non-canonical"
+    },
+    {
+      "id": "vm:Sv39:ffffffc4fea00000",
+      "category": "vm-layout",
+      "mode": "Sv39",
+      "region": "fixmap",
+      "start": "0xffffffc4fea00000",
+      "end": "0xffffffc4feffffff",
+      "size": "6 MB",
+      "description": "fixmap"
+    },
+    {
+      "id": "vm:Sv39:ffffffc4ff000000",
+      "category": "vm-layout",
+      "mode": "Sv39",
+      "region": "PCI",
+      "start": "0xffffffc4ff000000",
+      "end": "0xffffffc4ffffffff",
+      "size": "16 MB",
+      "description": "PCI io"
+    },
+    {
+      "id": "vm:Sv39:ffffffc500000000",
+      "category": "vm-layout",
+      "mode": "Sv39",
+      "region": "vmemmap",
+      "start": "0xffffffc500000000",
+      "end": "0xffffffc5ffffffff",
+      "size": "4 GB",
+      "description": "vmemmap"
+    },
+    {
+      "id": "vm:Sv39:ffffffc600000000",
+      "category": "vm-layout",
+      "mode": "Sv39",
+      "region": "vmalloc",
+      "start": "0xffffffc600000000",
+      "end": "0xffffffd5ffffffff",
+      "size": "64 GB",
+      "description": "vmalloc/ioremap space"
+    },
+    {
+      "id": "vm:Sv39:ffffffd600000000",
+      "category": "vm-layout",
+      "mode": "Sv39",
+      "region": "direct",
+      "start": "0xffffffd600000000",
+      "end": "0xfffffff5ffffffff",
+      "size": "128 GB",
+      "description": "direct mapping of all physical memory"
+    },
+    {
+      "id": "vm:Sv39:fffffff700000000",
+      "category": "vm-layout",
+      "mode": "Sv39",
+      "region": "kasan",
+      "start": "0xfffffff700000000",
+      "end": "0xfffffffeffffffff",
+      "size": "32 GB",
+      "description": "kasan"
+    },
+    {
+      "id": "vm:Sv39:ffffffff00000000",
+      "category": "vm-layout",
+      "mode": "Sv39",
+      "region": "modules",
+      "start": "0xffffffff00000000",
+      "end": "0xffffffff7fffffff",
+      "size": "2 GB",
+      "description": "modules, BPF"
+    },
+    {
+      "id": "vm:Sv39:ffffffff80000000",
+      "category": "vm-layout",
+      "mode": "Sv39",
+      "region": "kernel",
+      "start": "0xffffffff80000000",
+      "end": "0xffffffffffffffff",
+      "size": "2 GB",
+      "description": "kernel"
+    },
+    {
+      "id": "vm:Sv48:0000000000000000",
+      "category": "vm-layout",
+      "mode": "Sv48",
+      "region": "user-space",
+      "start": "0x0000000000000000",
+      "end": "0x00007fffffffffff",
+      "size": "128 TB",
+      "description": "user-space virtual memory, different per mm"
+    },
+    {
+      "id": "vm:Sv48:0000800000000000",
+      "category": "vm-layout",
+      "mode": "Sv48",
+      "region": "...",
+      "start": "0x0000800000000000",
+      "end": "0xffff7fffffffffff",
+      "size": "~16M TB",
+      "description": "... huge, almost 64 bits wide hole of non-canonical"
+    },
+    {
+      "id": "vm:Sv48:ffff8d7ffea00000",
+      "category": "vm-layout",
+      "mode": "Sv48",
+      "region": "fixmap",
+      "start": "0xffff8d7ffea00000",
+      "end": "0xffff8d7ffeffffff",
+      "size": "6 MB",
+      "description": "fixmap"
+    },
+    {
+      "id": "vm:Sv48:ffff8d7fff000000",
+      "category": "vm-layout",
+      "mode": "Sv48",
+      "region": "PCI",
+      "start": "0xffff8d7fff000000",
+      "end": "0xffff8d7fffffffff",
+      "size": "16 MB",
+      "description": "PCI io"
+    },
+    {
+      "id": "vm:Sv48:ffff8d8000000000",
+      "category": "vm-layout",
+      "mode": "Sv48",
+      "region": "vmemmap",
+      "start": "0xffff8d8000000000",
+      "end": "0xffff8f7fffffffff",
+      "size": "2 TB",
+      "description": "vmemmap"
+    },
+    {
+      "id": "vm:Sv48:ffff8f8000000000",
+      "category": "vm-layout",
+      "mode": "Sv48",
+      "region": "vmalloc",
+      "start": "0xffff8f8000000000",
+      "end": "0xffffaf7fffffffff",
+      "size": "32 TB",
+      "description": "vmalloc/ioremap space"
+    },
+    {
+      "id": "vm:Sv48:ffffaf8000000000",
+      "category": "vm-layout",
+      "mode": "Sv48",
+      "region": "direct",
+      "start": "0xffffaf8000000000",
+      "end": "0xffffef7fffffffff",
+      "size": "64 TB",
+      "description": "direct mapping of all physical memory"
+    },
+    {
+      "id": "vm:Sv48:ffffef8000000000",
+      "category": "vm-layout",
+      "mode": "Sv48",
+      "region": "kasan",
+      "start": "0xffffef8000000000",
+      "end": "0xfffffffeffffffff",
+      "size": "16.5 TB",
+      "description": "kasan"
+    },
+    {
+      "id": "vm:Sv48:ffffffff00000000",
+      "category": "vm-layout",
+      "mode": "Sv48",
+      "region": "modules",
+      "start": "0xffffffff00000000",
+      "end": "0xffffffff7fffffff",
+      "size": "2 GB",
+      "description": "modules, BPF"
+    },
+    {
+      "id": "vm:Sv48:ffffffff80000000",
+      "category": "vm-layout",
+      "mode": "Sv48",
+      "region": "kernel",
+      "start": "0xffffffff80000000",
+      "end": "0xffffffffffffffff",
+      "size": "2 GB",
+      "description": "kernel"
+    },
+    {
+      "id": "vm:Sv57:0000000000000000",
+      "category": "vm-layout",
+      "mode": "Sv57",
+      "region": "user-space",
+      "start": "0x0000000000000000",
+      "end": "0x00ffffffffffffff",
+      "size": "64 PB",
+      "description": "user-space virtual memory, different per mm"
+    },
+    {
+      "id": "vm:Sv57:0100000000000000",
+      "category": "vm-layout",
+      "mode": "Sv57",
+      "region": "...",
+      "start": "0x0100000000000000",
+      "end": "0xfeffffffffffffff",
+      "size": "~16K PB",
+      "description": "... huge, almost 64 bits wide hole of non-canonical"
+    },
+    {
+      "id": "vm:Sv57:ff1bfffffea00000",
+      "category": "vm-layout",
+      "mode": "Sv57",
+      "region": "fixmap",
+      "start": "0xff1bfffffea00000",
+      "end": "0xff1bfffffeffffff",
+      "size": "6 MB",
+      "description": "fixmap"
+    },
+    {
+      "id": "vm:Sv57:ff1bffffff000000",
+      "category": "vm-layout",
+      "mode": "Sv57",
+      "region": "PCI",
+      "start": "0xff1bffffff000000",
+      "end": "0xff1bffffffffffff",
+      "size": "16 MB",
+      "description": "PCI io"
+    },
+    {
+      "id": "vm:Sv57:ff1c000000000000",
+      "category": "vm-layout",
+      "mode": "Sv57",
+      "region": "vmemmap",
+      "start": "0xff1c000000000000",
+      "end": "0xff1fffffffffffff",
+      "size": "1 PB",
+      "description": "vmemmap"
+    },
+    {
+      "id": "vm:Sv57:ff20000000000000",
+      "category": "vm-layout",
+      "mode": "Sv57",
+      "region": "vmalloc",
+      "start": "0xff20000000000000",
+      "end": "0xff5fffffffffffff",
+      "size": "16 PB",
+      "description": "vmalloc/ioremap space"
+    },
+    {
+      "id": "vm:Sv57:ff60000000000000",
+      "category": "vm-layout",
+      "mode": "Sv57",
+      "region": "direct",
+      "start": "0xff60000000000000",
+      "end": "0xffdeffffffffffff",
+      "size": "32 PB",
+      "description": "direct mapping of all physical memory"
+    },
+    {
+      "id": "vm:Sv57:ffdf000000000000",
+      "category": "vm-layout",
+      "mode": "Sv57",
+      "region": "kasan",
+      "start": "0xffdf000000000000",
+      "end": "0xfffffffeffffffff",
+      "size": "8 PB",
+      "description": "kasan"
+    },
+    {
+      "id": "vm:Sv57:ffffffff00000000",
+      "category": "vm-layout",
+      "mode": "Sv57",
+      "region": "modules",
+      "start": "0xffffffff00000000",
+      "end": "0xffffffff7fffffff",
+      "size": "2 GB",
+      "description": "modules, BPF"
+    },
+    {
+      "id": "vm:Sv57:ffffffff80000000",
+      "category": "vm-layout",
+      "mode": "Sv57",
+      "region": "kernel",
+      "start": "0xffffffff80000000",
+      "end": "0xffffffffffffffff",
+      "size": "2 GB",
+      "description": "kernel"
+    },
+    {
+      "id": "boot:a0",
+      "category": "boot-abi",
+      "mode": "",
+      "region": "a0",
+      "start": "",
+      "end": "",
+      "size": "",
+      "description": "the hartid of the current core"
+    },
+    {
+      "id": "boot:a1",
+      "category": "boot-abi",
+      "mode": "",
+      "region": "a1",
+      "start": "",
+      "end": "",
+      "size": "",
+      "description": "the address of the devicetree in memory"
+    }
+  ]
+}

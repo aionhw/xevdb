@@ -1,0 +1,2710 @@
+{
+  "kernel_version": "v6.12",
+  "count": 338,
+  "syscalls": [
+    {
+      "id": "nr:0",
+      "nr": 0,
+      "name": "io_setup",
+      "entry": "sys_io_setup",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:1",
+      "nr": 1,
+      "name": "io_destroy",
+      "entry": "sys_io_destroy",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:2",
+      "nr": 2,
+      "name": "io_submit",
+      "entry": "sys_io_submit",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:3",
+      "nr": 3,
+      "name": "io_cancel",
+      "entry": "sys_io_cancel",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:4",
+      "nr": 4,
+      "name": "io_getevents",
+      "entry": "sys_io_getevents",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:5",
+      "nr": 5,
+      "name": "setxattr",
+      "entry": "sys_setxattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:6",
+      "nr": 6,
+      "name": "lsetxattr",
+      "entry": "sys_lsetxattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:7",
+      "nr": 7,
+      "name": "fsetxattr",
+      "entry": "sys_fsetxattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:8",
+      "nr": 8,
+      "name": "getxattr",
+      "entry": "sys_getxattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:9",
+      "nr": 9,
+      "name": "lgetxattr",
+      "entry": "sys_lgetxattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:10",
+      "nr": 10,
+      "name": "fgetxattr",
+      "entry": "sys_fgetxattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:11",
+      "nr": 11,
+      "name": "listxattr",
+      "entry": "sys_listxattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:12",
+      "nr": 12,
+      "name": "llistxattr",
+      "entry": "sys_llistxattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:13",
+      "nr": 13,
+      "name": "flistxattr",
+      "entry": "sys_flistxattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:14",
+      "nr": 14,
+      "name": "removexattr",
+      "entry": "sys_removexattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:15",
+      "nr": 15,
+      "name": "lremovexattr",
+      "entry": "sys_lremovexattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:16",
+      "nr": 16,
+      "name": "fremovexattr",
+      "entry": "sys_fremovexattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:17",
+      "nr": 17,
+      "name": "getcwd",
+      "entry": "sys_getcwd",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:18",
+      "nr": 18,
+      "name": "lookup_dcookie",
+      "entry": "sys_ni_syscall",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:19",
+      "nr": 19,
+      "name": "eventfd2",
+      "entry": "sys_eventfd2",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:20",
+      "nr": 20,
+      "name": "epoll_create1",
+      "entry": "sys_epoll_create1",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:21",
+      "nr": 21,
+      "name": "epoll_ctl",
+      "entry": "sys_epoll_ctl",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:22",
+      "nr": 22,
+      "name": "epoll_pwait",
+      "entry": "sys_epoll_pwait",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:23",
+      "nr": 23,
+      "name": "dup",
+      "entry": "sys_dup",
+      "abi": "generic",
+      "description": "Duplicate a fd."
+    },
+    {
+      "id": "nr:24",
+      "nr": 24,
+      "name": "dup3",
+      "entry": "sys_dup3",
+      "abi": "generic",
+      "description": "Duplicate a fd (flags)."
+    },
+    {
+      "id": "nr:25",
+      "nr": 25,
+      "name": "fcntl",
+      "entry": "sys_fcntl",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:26",
+      "nr": 26,
+      "name": "inotify_init1",
+      "entry": "sys_inotify_init1",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:27",
+      "nr": 27,
+      "name": "inotify_add_watch",
+      "entry": "sys_inotify_add_watch",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:28",
+      "nr": 28,
+      "name": "inotify_rm_watch",
+      "entry": "sys_inotify_rm_watch",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:29",
+      "nr": 29,
+      "name": "ioctl",
+      "entry": "sys_ioctl",
+      "abi": "generic",
+      "description": "Device control."
+    },
+    {
+      "id": "nr:30",
+      "nr": 30,
+      "name": "ioprio_set",
+      "entry": "sys_ioprio_set",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:31",
+      "nr": 31,
+      "name": "ioprio_get",
+      "entry": "sys_ioprio_get",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:32",
+      "nr": 32,
+      "name": "flock",
+      "entry": "sys_flock",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:33",
+      "nr": 33,
+      "name": "mknodat",
+      "entry": "sys_mknodat",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:34",
+      "nr": 34,
+      "name": "mkdirat",
+      "entry": "sys_mkdirat",
+      "abi": "generic",
+      "description": "Create a directory relative to a dir fd."
+    },
+    {
+      "id": "nr:35",
+      "nr": 35,
+      "name": "unlinkat",
+      "entry": "sys_unlinkat",
+      "abi": "generic",
+      "description": "Remove a directory entry."
+    },
+    {
+      "id": "nr:36",
+      "nr": 36,
+      "name": "symlinkat",
+      "entry": "sys_symlinkat",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:37",
+      "nr": 37,
+      "name": "linkat",
+      "entry": "sys_linkat",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:38",
+      "nr": 38,
+      "name": "renameat",
+      "entry": "sys_renameat",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:39",
+      "nr": 39,
+      "name": "umount2",
+      "entry": "sys_umount",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:40",
+      "nr": 40,
+      "name": "mount",
+      "entry": "sys_mount",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:41",
+      "nr": 41,
+      "name": "pivot_root",
+      "entry": "sys_pivot_root",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:42",
+      "nr": 42,
+      "name": "nfsservctl",
+      "entry": "sys_ni_syscall",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:43",
+      "nr": 43,
+      "name": "statfs",
+      "entry": "sys_statfs",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:44",
+      "nr": 44,
+      "name": "fstatfs",
+      "entry": "sys_fstatfs",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:45",
+      "nr": 45,
+      "name": "truncate",
+      "entry": "sys_truncate",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:46",
+      "nr": 46,
+      "name": "ftruncate",
+      "entry": "sys_ftruncate",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:47",
+      "nr": 47,
+      "name": "fallocate",
+      "entry": "sys_fallocate",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:48",
+      "nr": 48,
+      "name": "faccessat",
+      "entry": "sys_faccessat",
+      "abi": "generic",
+      "description": "Check file access relative to a dir fd."
+    },
+    {
+      "id": "nr:49",
+      "nr": 49,
+      "name": "chdir",
+      "entry": "sys_chdir",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:50",
+      "nr": 50,
+      "name": "fchdir",
+      "entry": "sys_fchdir",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:51",
+      "nr": 51,
+      "name": "chroot",
+      "entry": "sys_chroot",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:52",
+      "nr": 52,
+      "name": "fchmod",
+      "entry": "sys_fchmod",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:53",
+      "nr": 53,
+      "name": "fchmodat",
+      "entry": "sys_fchmodat",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:54",
+      "nr": 54,
+      "name": "fchownat",
+      "entry": "sys_fchownat",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:55",
+      "nr": 55,
+      "name": "fchown",
+      "entry": "sys_fchown",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:56",
+      "nr": 56,
+      "name": "openat",
+      "entry": "sys_openat",
+      "abi": "generic",
+      "description": "Open a file relative to a directory fd."
+    },
+    {
+      "id": "nr:57",
+      "nr": 57,
+      "name": "close",
+      "entry": "sys_close",
+      "abi": "generic",
+      "description": "Close a fd."
+    },
+    {
+      "id": "nr:58",
+      "nr": 58,
+      "name": "vhangup",
+      "entry": "sys_vhangup",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:59",
+      "nr": 59,
+      "name": "pipe2",
+      "entry": "sys_pipe2",
+      "abi": "generic",
+      "description": "Create a pipe."
+    },
+    {
+      "id": "nr:60",
+      "nr": 60,
+      "name": "quotactl",
+      "entry": "sys_quotactl",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:61",
+      "nr": 61,
+      "name": "getdents64",
+      "entry": "sys_getdents64",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:62",
+      "nr": 62,
+      "name": "lseek",
+      "entry": "sys_lseek",
+      "abi": "generic",
+      "description": "Reposition a file offset."
+    },
+    {
+      "id": "nr:63",
+      "nr": 63,
+      "name": "read",
+      "entry": "sys_read",
+      "abi": "generic",
+      "description": "Read from a file descriptor."
+    },
+    {
+      "id": "nr:64",
+      "nr": 64,
+      "name": "write",
+      "entry": "sys_write",
+      "abi": "generic",
+      "description": "Write to a file descriptor."
+    },
+    {
+      "id": "nr:65",
+      "nr": 65,
+      "name": "readv",
+      "entry": "sys_readv",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:66",
+      "nr": 66,
+      "name": "writev",
+      "entry": "sys_writev",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:67",
+      "nr": 67,
+      "name": "pread64",
+      "entry": "sys_pread64",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:68",
+      "nr": 68,
+      "name": "pwrite64",
+      "entry": "sys_pwrite64",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:69",
+      "nr": 69,
+      "name": "preadv",
+      "entry": "sys_preadv",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:70",
+      "nr": 70,
+      "name": "pwritev",
+      "entry": "sys_pwritev",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:71",
+      "nr": 71,
+      "name": "sendfile",
+      "entry": "sys_sendfile",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:72",
+      "nr": 72,
+      "name": "pselect6",
+      "entry": "sys_pselect6_time32",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:73",
+      "nr": 73,
+      "name": "ppoll",
+      "entry": "sys_ppoll_time32",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:74",
+      "nr": 74,
+      "name": "signalfd4",
+      "entry": "sys_signalfd4",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:75",
+      "nr": 75,
+      "name": "vmsplice",
+      "entry": "sys_vmsplice",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:76",
+      "nr": 76,
+      "name": "splice",
+      "entry": "sys_splice",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:77",
+      "nr": 77,
+      "name": "tee",
+      "entry": "sys_tee",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:78",
+      "nr": 78,
+      "name": "readlinkat",
+      "entry": "sys_readlinkat",
+      "abi": "generic",
+      "description": "Read a symlink relative to a dir fd."
+    },
+    {
+      "id": "nr:79",
+      "nr": 79,
+      "name": "newfstatat",
+      "entry": "sys_newfstatat",
+      "abi": "generic",
+      "description": "Get file status relative to a dir fd."
+    },
+    {
+      "id": "nr:80",
+      "nr": 80,
+      "name": "fstat",
+      "entry": "sys_fstat",
+      "abi": "generic",
+      "description": "Get file status by fd."
+    },
+    {
+      "id": "nr:81",
+      "nr": 81,
+      "name": "sync",
+      "entry": "sys_sync",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:82",
+      "nr": 82,
+      "name": "fsync",
+      "entry": "sys_fsync",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:83",
+      "nr": 83,
+      "name": "fdatasync",
+      "entry": "sys_fdatasync",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:84",
+      "nr": 84,
+      "name": "sync_file_range2",
+      "entry": "sys_sync_file_range2",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:85",
+      "nr": 85,
+      "name": "timerfd_create",
+      "entry": "sys_timerfd_create",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:86",
+      "nr": 86,
+      "name": "timerfd_settime",
+      "entry": "sys_timerfd_settime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:87",
+      "nr": 87,
+      "name": "timerfd_gettime",
+      "entry": "sys_timerfd_gettime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:88",
+      "nr": 88,
+      "name": "utimensat",
+      "entry": "sys_utimensat",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:89",
+      "nr": 89,
+      "name": "acct",
+      "entry": "sys_acct",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:90",
+      "nr": 90,
+      "name": "capget",
+      "entry": "sys_capget",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:91",
+      "nr": 91,
+      "name": "capset",
+      "entry": "sys_capset",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:92",
+      "nr": 92,
+      "name": "personality",
+      "entry": "sys_personality",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:93",
+      "nr": 93,
+      "name": "exit",
+      "entry": "sys_exit",
+      "abi": "generic",
+      "description": "Terminate the calling thread."
+    },
+    {
+      "id": "nr:94",
+      "nr": 94,
+      "name": "exit_group",
+      "entry": "sys_exit_group",
+      "abi": "generic",
+      "description": "Terminate all threads."
+    },
+    {
+      "id": "nr:95",
+      "nr": 95,
+      "name": "waitid",
+      "entry": "sys_waitid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:96",
+      "nr": 96,
+      "name": "set_tid_address",
+      "entry": "sys_set_tid_address",
+      "abi": "generic",
+      "description": "Set clear_child_tid."
+    },
+    {
+      "id": "nr:97",
+      "nr": 97,
+      "name": "unshare",
+      "entry": "sys_unshare",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:98",
+      "nr": 98,
+      "name": "futex",
+      "entry": "sys_futex",
+      "abi": "generic",
+      "description": "Fast user-space locking."
+    },
+    {
+      "id": "nr:99",
+      "nr": 99,
+      "name": "set_robust_list",
+      "entry": "sys_set_robust_list",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:100",
+      "nr": 100,
+      "name": "get_robust_list",
+      "entry": "sys_get_robust_list",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:101",
+      "nr": 101,
+      "name": "nanosleep",
+      "entry": "sys_nanosleep",
+      "abi": "generic",
+      "description": "High-resolution sleep."
+    },
+    {
+      "id": "nr:102",
+      "nr": 102,
+      "name": "getitimer",
+      "entry": "sys_getitimer",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:103",
+      "nr": 103,
+      "name": "setitimer",
+      "entry": "sys_setitimer",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:104",
+      "nr": 104,
+      "name": "kexec_load",
+      "entry": "sys_kexec_load",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:105",
+      "nr": 105,
+      "name": "init_module",
+      "entry": "sys_init_module",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:106",
+      "nr": 106,
+      "name": "delete_module",
+      "entry": "sys_delete_module",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:107",
+      "nr": 107,
+      "name": "timer_create",
+      "entry": "sys_timer_create",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:108",
+      "nr": 108,
+      "name": "timer_gettime",
+      "entry": "sys_timer_gettime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:109",
+      "nr": 109,
+      "name": "timer_getoverrun",
+      "entry": "sys_timer_getoverrun",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:110",
+      "nr": 110,
+      "name": "timer_settime",
+      "entry": "sys_timer_settime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:111",
+      "nr": 111,
+      "name": "timer_delete",
+      "entry": "sys_timer_delete",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:112",
+      "nr": 112,
+      "name": "clock_settime",
+      "entry": "sys_clock_settime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:113",
+      "nr": 113,
+      "name": "clock_gettime",
+      "entry": "sys_clock_gettime",
+      "abi": "generic",
+      "description": "Read a clock."
+    },
+    {
+      "id": "nr:114",
+      "nr": 114,
+      "name": "clock_getres",
+      "entry": "sys_clock_getres",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:115",
+      "nr": 115,
+      "name": "clock_nanosleep",
+      "entry": "sys_clock_nanosleep",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:116",
+      "nr": 116,
+      "name": "syslog",
+      "entry": "sys_syslog",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:117",
+      "nr": 117,
+      "name": "ptrace",
+      "entry": "sys_ptrace",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:118",
+      "nr": 118,
+      "name": "sched_setparam",
+      "entry": "sys_sched_setparam",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:119",
+      "nr": 119,
+      "name": "sched_setscheduler",
+      "entry": "sys_sched_setscheduler",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:120",
+      "nr": 120,
+      "name": "sched_getscheduler",
+      "entry": "sys_sched_getscheduler",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:121",
+      "nr": 121,
+      "name": "sched_getparam",
+      "entry": "sys_sched_getparam",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:122",
+      "nr": 122,
+      "name": "sched_setaffinity",
+      "entry": "sys_sched_setaffinity",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:123",
+      "nr": 123,
+      "name": "sched_getaffinity",
+      "entry": "sys_sched_getaffinity",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:124",
+      "nr": 124,
+      "name": "sched_yield",
+      "entry": "sys_sched_yield",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:125",
+      "nr": 125,
+      "name": "sched_get_priority_max",
+      "entry": "sys_sched_get_priority_max",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:126",
+      "nr": 126,
+      "name": "sched_get_priority_min",
+      "entry": "sys_sched_get_priority_min",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:127",
+      "nr": 127,
+      "name": "sched_rr_get_interval",
+      "entry": "sys_sched_rr_get_interval",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:128",
+      "nr": 128,
+      "name": "restart_syscall",
+      "entry": "sys_restart_syscall",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:129",
+      "nr": 129,
+      "name": "kill",
+      "entry": "sys_kill",
+      "abi": "generic",
+      "description": "Send a signal to a process."
+    },
+    {
+      "id": "nr:130",
+      "nr": 130,
+      "name": "tkill",
+      "entry": "sys_tkill",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:131",
+      "nr": 131,
+      "name": "tgkill",
+      "entry": "sys_tgkill",
+      "abi": "generic",
+      "description": "Send a signal to a thread."
+    },
+    {
+      "id": "nr:132",
+      "nr": 132,
+      "name": "sigaltstack",
+      "entry": "sys_sigaltstack",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:133",
+      "nr": 133,
+      "name": "rt_sigsuspend",
+      "entry": "sys_rt_sigsuspend",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:134",
+      "nr": 134,
+      "name": "rt_sigaction",
+      "entry": "sys_rt_sigaction",
+      "abi": "generic",
+      "description": "Set a signal handler."
+    },
+    {
+      "id": "nr:135",
+      "nr": 135,
+      "name": "rt_sigprocmask",
+      "entry": "sys_rt_sigprocmask",
+      "abi": "generic",
+      "description": "Change blocked signals."
+    },
+    {
+      "id": "nr:136",
+      "nr": 136,
+      "name": "rt_sigpending",
+      "entry": "sys_rt_sigpending",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:137",
+      "nr": 137,
+      "name": "rt_sigtimedwait",
+      "entry": "sys_rt_sigtimedwait",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:138",
+      "nr": 138,
+      "name": "rt_sigqueueinfo",
+      "entry": "sys_rt_sigqueueinfo",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:139",
+      "nr": 139,
+      "name": "rt_sigreturn",
+      "entry": "sys_rt_sigreturn",
+      "abi": "generic",
+      "description": "Return from a signal handler."
+    },
+    {
+      "id": "nr:140",
+      "nr": 140,
+      "name": "setpriority",
+      "entry": "sys_setpriority",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:141",
+      "nr": 141,
+      "name": "getpriority",
+      "entry": "sys_getpriority",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:142",
+      "nr": 142,
+      "name": "reboot",
+      "entry": "sys_reboot",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:143",
+      "nr": 143,
+      "name": "setregid",
+      "entry": "sys_setregid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:144",
+      "nr": 144,
+      "name": "setgid",
+      "entry": "sys_setgid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:145",
+      "nr": 145,
+      "name": "setreuid",
+      "entry": "sys_setreuid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:146",
+      "nr": 146,
+      "name": "setuid",
+      "entry": "sys_setuid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:147",
+      "nr": 147,
+      "name": "setresuid",
+      "entry": "sys_setresuid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:148",
+      "nr": 148,
+      "name": "getresuid",
+      "entry": "sys_getresuid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:149",
+      "nr": 149,
+      "name": "setresgid",
+      "entry": "sys_setresgid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:150",
+      "nr": 150,
+      "name": "getresgid",
+      "entry": "sys_getresgid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:151",
+      "nr": 151,
+      "name": "setfsuid",
+      "entry": "sys_setfsuid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:152",
+      "nr": 152,
+      "name": "setfsgid",
+      "entry": "sys_setfsgid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:153",
+      "nr": 153,
+      "name": "times",
+      "entry": "sys_times",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:154",
+      "nr": 154,
+      "name": "setpgid",
+      "entry": "sys_setpgid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:155",
+      "nr": 155,
+      "name": "getpgid",
+      "entry": "sys_getpgid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:156",
+      "nr": 156,
+      "name": "getsid",
+      "entry": "sys_getsid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:157",
+      "nr": 157,
+      "name": "setsid",
+      "entry": "sys_setsid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:158",
+      "nr": 158,
+      "name": "getgroups",
+      "entry": "sys_getgroups",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:159",
+      "nr": 159,
+      "name": "setgroups",
+      "entry": "sys_setgroups",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:160",
+      "nr": 160,
+      "name": "uname",
+      "entry": "sys_newuname",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:161",
+      "nr": 161,
+      "name": "sethostname",
+      "entry": "sys_sethostname",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:162",
+      "nr": 162,
+      "name": "setdomainname",
+      "entry": "sys_setdomainname",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:163",
+      "nr": 163,
+      "name": "getrlimit",
+      "entry": "sys_getrlimit",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:164",
+      "nr": 164,
+      "name": "setrlimit",
+      "entry": "sys_setrlimit",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:165",
+      "nr": 165,
+      "name": "getrusage",
+      "entry": "sys_getrusage",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:166",
+      "nr": 166,
+      "name": "umask",
+      "entry": "sys_umask",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:167",
+      "nr": 167,
+      "name": "prctl",
+      "entry": "sys_prctl",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:168",
+      "nr": 168,
+      "name": "getcpu",
+      "entry": "sys_getcpu",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:169",
+      "nr": 169,
+      "name": "gettimeofday",
+      "entry": "sys_gettimeofday",
+      "abi": "generic",
+      "description": "Get time of day."
+    },
+    {
+      "id": "nr:170",
+      "nr": 170,
+      "name": "settimeofday",
+      "entry": "sys_settimeofday",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:171",
+      "nr": 171,
+      "name": "adjtimex",
+      "entry": "sys_adjtimex",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:172",
+      "nr": 172,
+      "name": "getpid",
+      "entry": "sys_getpid",
+      "abi": "generic",
+      "description": "Get process ID."
+    },
+    {
+      "id": "nr:173",
+      "nr": 173,
+      "name": "getppid",
+      "entry": "sys_getppid",
+      "abi": "generic",
+      "description": "Get parent process ID."
+    },
+    {
+      "id": "nr:174",
+      "nr": 174,
+      "name": "getuid",
+      "entry": "sys_getuid",
+      "abi": "generic",
+      "description": "Get real user ID."
+    },
+    {
+      "id": "nr:175",
+      "nr": 175,
+      "name": "geteuid",
+      "entry": "sys_geteuid",
+      "abi": "generic",
+      "description": "Get effective user ID."
+    },
+    {
+      "id": "nr:176",
+      "nr": 176,
+      "name": "getgid",
+      "entry": "sys_getgid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:177",
+      "nr": 177,
+      "name": "getegid",
+      "entry": "sys_getegid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:178",
+      "nr": 178,
+      "name": "gettid",
+      "entry": "sys_gettid",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:179",
+      "nr": 179,
+      "name": "sysinfo",
+      "entry": "sys_sysinfo",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:180",
+      "nr": 180,
+      "name": "mq_open",
+      "entry": "sys_mq_open",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:181",
+      "nr": 181,
+      "name": "mq_unlink",
+      "entry": "sys_mq_unlink",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:182",
+      "nr": 182,
+      "name": "mq_timedsend",
+      "entry": "sys_mq_timedsend",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:183",
+      "nr": 183,
+      "name": "mq_timedreceive",
+      "entry": "sys_mq_timedreceive",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:184",
+      "nr": 184,
+      "name": "mq_notify",
+      "entry": "sys_mq_notify",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:185",
+      "nr": 185,
+      "name": "mq_getsetattr",
+      "entry": "sys_mq_getsetattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:186",
+      "nr": 186,
+      "name": "msgget",
+      "entry": "sys_msgget",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:187",
+      "nr": 187,
+      "name": "msgctl",
+      "entry": "sys_msgctl",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:188",
+      "nr": 188,
+      "name": "msgrcv",
+      "entry": "sys_msgrcv",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:189",
+      "nr": 189,
+      "name": "msgsnd",
+      "entry": "sys_msgsnd",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:190",
+      "nr": 190,
+      "name": "semget",
+      "entry": "sys_semget",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:191",
+      "nr": 191,
+      "name": "semctl",
+      "entry": "sys_semctl",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:192",
+      "nr": 192,
+      "name": "semtimedop",
+      "entry": "sys_semtimedop",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:193",
+      "nr": 193,
+      "name": "semop",
+      "entry": "sys_semop",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:194",
+      "nr": 194,
+      "name": "shmget",
+      "entry": "sys_shmget",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:195",
+      "nr": 195,
+      "name": "shmctl",
+      "entry": "sys_shmctl",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:196",
+      "nr": 196,
+      "name": "shmat",
+      "entry": "sys_shmat",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:197",
+      "nr": 197,
+      "name": "shmdt",
+      "entry": "sys_shmdt",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:198",
+      "nr": 198,
+      "name": "socket",
+      "entry": "sys_socket",
+      "abi": "generic",
+      "description": "Create a socket."
+    },
+    {
+      "id": "nr:199",
+      "nr": 199,
+      "name": "socketpair",
+      "entry": "sys_socketpair",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:200",
+      "nr": 200,
+      "name": "bind",
+      "entry": "sys_bind",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:201",
+      "nr": 201,
+      "name": "listen",
+      "entry": "sys_listen",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:202",
+      "nr": 202,
+      "name": "accept",
+      "entry": "sys_accept",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:203",
+      "nr": 203,
+      "name": "connect",
+      "entry": "sys_connect",
+      "abi": "generic",
+      "description": "Connect a socket."
+    },
+    {
+      "id": "nr:204",
+      "nr": 204,
+      "name": "getsockname",
+      "entry": "sys_getsockname",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:205",
+      "nr": 205,
+      "name": "getpeername",
+      "entry": "sys_getpeername",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:206",
+      "nr": 206,
+      "name": "sendto",
+      "entry": "sys_sendto",
+      "abi": "generic",
+      "description": "Send on a socket."
+    },
+    {
+      "id": "nr:207",
+      "nr": 207,
+      "name": "recvfrom",
+      "entry": "sys_recvfrom",
+      "abi": "generic",
+      "description": "Receive on a socket."
+    },
+    {
+      "id": "nr:208",
+      "nr": 208,
+      "name": "setsockopt",
+      "entry": "sys_setsockopt",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:209",
+      "nr": 209,
+      "name": "getsockopt",
+      "entry": "sys_getsockopt",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:210",
+      "nr": 210,
+      "name": "shutdown",
+      "entry": "sys_shutdown",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:211",
+      "nr": 211,
+      "name": "sendmsg",
+      "entry": "sys_sendmsg",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:212",
+      "nr": 212,
+      "name": "recvmsg",
+      "entry": "sys_recvmsg",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:213",
+      "nr": 213,
+      "name": "readahead",
+      "entry": "sys_readahead",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:214",
+      "nr": 214,
+      "name": "brk",
+      "entry": "sys_brk",
+      "abi": "generic",
+      "description": "Change the program break (heap end)."
+    },
+    {
+      "id": "nr:215",
+      "nr": 215,
+      "name": "munmap",
+      "entry": "sys_munmap",
+      "abi": "generic",
+      "description": "Unmap a memory region."
+    },
+    {
+      "id": "nr:216",
+      "nr": 216,
+      "name": "mremap",
+      "entry": "sys_mremap",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:217",
+      "nr": 217,
+      "name": "add_key",
+      "entry": "sys_add_key",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:218",
+      "nr": 218,
+      "name": "request_key",
+      "entry": "sys_request_key",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:219",
+      "nr": 219,
+      "name": "keyctl",
+      "entry": "sys_keyctl",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:220",
+      "nr": 220,
+      "name": "clone",
+      "entry": "sys_clone",
+      "abi": "generic",
+      "description": "Create a child process/thread."
+    },
+    {
+      "id": "nr:221",
+      "nr": 221,
+      "name": "execve",
+      "entry": "sys_execve",
+      "abi": "generic",
+      "description": "Execute a program."
+    },
+    {
+      "id": "nr:222",
+      "nr": 222,
+      "name": "mmap",
+      "entry": "sys_mmap",
+      "abi": "generic",
+      "description": "Map files/devices into memory."
+    },
+    {
+      "id": "nr:223",
+      "nr": 223,
+      "name": "fadvise64",
+      "entry": "sys_fadvise64",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:224",
+      "nr": 224,
+      "name": "swapon",
+      "entry": "sys_swapon",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:225",
+      "nr": 225,
+      "name": "swapoff",
+      "entry": "sys_swapoff",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:226",
+      "nr": 226,
+      "name": "mprotect",
+      "entry": "sys_mprotect",
+      "abi": "generic",
+      "description": "Set memory protection."
+    },
+    {
+      "id": "nr:227",
+      "nr": 227,
+      "name": "msync",
+      "entry": "sys_msync",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:228",
+      "nr": 228,
+      "name": "mlock",
+      "entry": "sys_mlock",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:229",
+      "nr": 229,
+      "name": "munlock",
+      "entry": "sys_munlock",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:230",
+      "nr": 230,
+      "name": "mlockall",
+      "entry": "sys_mlockall",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:231",
+      "nr": 231,
+      "name": "munlockall",
+      "entry": "sys_munlockall",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:232",
+      "nr": 232,
+      "name": "mincore",
+      "entry": "sys_mincore",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:233",
+      "nr": 233,
+      "name": "madvise",
+      "entry": "sys_madvise",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:234",
+      "nr": 234,
+      "name": "remap_file_pages",
+      "entry": "sys_remap_file_pages",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:235",
+      "nr": 235,
+      "name": "mbind",
+      "entry": "sys_mbind",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:236",
+      "nr": 236,
+      "name": "get_mempolicy",
+      "entry": "sys_get_mempolicy",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:237",
+      "nr": 237,
+      "name": "set_mempolicy",
+      "entry": "sys_set_mempolicy",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:238",
+      "nr": 238,
+      "name": "migrate_pages",
+      "entry": "sys_migrate_pages",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:239",
+      "nr": 239,
+      "name": "move_pages",
+      "entry": "sys_move_pages",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:240",
+      "nr": 240,
+      "name": "rt_tgsigqueueinfo",
+      "entry": "sys_rt_tgsigqueueinfo",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:241",
+      "nr": 241,
+      "name": "perf_event_open",
+      "entry": "sys_perf_event_open",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:242",
+      "nr": 242,
+      "name": "accept4",
+      "entry": "sys_accept4",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:243",
+      "nr": 243,
+      "name": "recvmmsg",
+      "entry": "sys_recvmmsg_time32",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:260",
+      "nr": 260,
+      "name": "wait4",
+      "entry": "sys_wait4",
+      "abi": "generic",
+      "description": "Wait for process state change."
+    },
+    {
+      "id": "nr:261",
+      "nr": 261,
+      "name": "prlimit64",
+      "entry": "sys_prlimit64",
+      "abi": "generic",
+      "description": "Get/set resource limits."
+    },
+    {
+      "id": "nr:262",
+      "nr": 262,
+      "name": "fanotify_init",
+      "entry": "sys_fanotify_init",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:263",
+      "nr": 263,
+      "name": "fanotify_mark",
+      "entry": "sys_fanotify_mark",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:264",
+      "nr": 264,
+      "name": "name_to_handle_at",
+      "entry": "sys_name_to_handle_at",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:265",
+      "nr": 265,
+      "name": "open_by_handle_at",
+      "entry": "sys_open_by_handle_at",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:266",
+      "nr": 266,
+      "name": "clock_adjtime",
+      "entry": "sys_clock_adjtime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:267",
+      "nr": 267,
+      "name": "syncfs",
+      "entry": "sys_syncfs",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:268",
+      "nr": 268,
+      "name": "setns",
+      "entry": "sys_setns",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:269",
+      "nr": 269,
+      "name": "sendmmsg",
+      "entry": "sys_sendmmsg",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:270",
+      "nr": 270,
+      "name": "process_vm_readv",
+      "entry": "sys_process_vm_readv",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:271",
+      "nr": 271,
+      "name": "process_vm_writev",
+      "entry": "sys_process_vm_writev",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:272",
+      "nr": 272,
+      "name": "kcmp",
+      "entry": "sys_kcmp",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:273",
+      "nr": 273,
+      "name": "finit_module",
+      "entry": "sys_finit_module",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:274",
+      "nr": 274,
+      "name": "sched_setattr",
+      "entry": "sys_sched_setattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:275",
+      "nr": 275,
+      "name": "sched_getattr",
+      "entry": "sys_sched_getattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:276",
+      "nr": 276,
+      "name": "renameat2",
+      "entry": "sys_renameat2",
+      "abi": "generic",
+      "description": "Rename a file (flags)."
+    },
+    {
+      "id": "nr:277",
+      "nr": 277,
+      "name": "seccomp",
+      "entry": "sys_seccomp",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:278",
+      "nr": 278,
+      "name": "getrandom",
+      "entry": "sys_getrandom",
+      "abi": "generic",
+      "description": "Fill a buffer with random bytes."
+    },
+    {
+      "id": "nr:279",
+      "nr": 279,
+      "name": "memfd_create",
+      "entry": "sys_memfd_create",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:280",
+      "nr": 280,
+      "name": "bpf",
+      "entry": "sys_bpf",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:281",
+      "nr": 281,
+      "name": "execveat",
+      "entry": "sys_execveat",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:282",
+      "nr": 282,
+      "name": "userfaultfd",
+      "entry": "sys_userfaultfd",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:283",
+      "nr": 283,
+      "name": "membarrier",
+      "entry": "sys_membarrier",
+      "abi": "generic",
+      "description": "Issue memory barriers."
+    },
+    {
+      "id": "nr:284",
+      "nr": 284,
+      "name": "mlock2",
+      "entry": "sys_mlock2",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:285",
+      "nr": 285,
+      "name": "copy_file_range",
+      "entry": "sys_copy_file_range",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:286",
+      "nr": 286,
+      "name": "preadv2",
+      "entry": "sys_preadv2",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:287",
+      "nr": 287,
+      "name": "pwritev2",
+      "entry": "sys_pwritev2",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:288",
+      "nr": 288,
+      "name": "pkey_mprotect",
+      "entry": "sys_pkey_mprotect",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:289",
+      "nr": 289,
+      "name": "pkey_alloc",
+      "entry": "sys_pkey_alloc",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:290",
+      "nr": 290,
+      "name": "pkey_free",
+      "entry": "sys_pkey_free",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:291",
+      "nr": 291,
+      "name": "statx",
+      "entry": "sys_statx",
+      "abi": "generic",
+      "description": "Extended file status."
+    },
+    {
+      "id": "nr:292",
+      "nr": 292,
+      "name": "io_pgetevents",
+      "entry": "sys_io_pgetevents_time32",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:293",
+      "nr": 293,
+      "name": "rseq",
+      "entry": "sys_rseq",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:294",
+      "nr": 294,
+      "name": "kexec_file_load",
+      "entry": "sys_kexec_file_load",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:403",
+      "nr": 403,
+      "name": "clock_gettime64",
+      "entry": "sys_clock_gettime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:404",
+      "nr": 404,
+      "name": "clock_settime64",
+      "entry": "sys_clock_settime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:405",
+      "nr": 405,
+      "name": "clock_adjtime64",
+      "entry": "sys_clock_adjtime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:406",
+      "nr": 406,
+      "name": "clock_getres_time64",
+      "entry": "sys_clock_getres",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:407",
+      "nr": 407,
+      "name": "clock_nanosleep_time64",
+      "entry": "sys_clock_nanosleep",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:408",
+      "nr": 408,
+      "name": "timer_gettime64",
+      "entry": "sys_timer_gettime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:409",
+      "nr": 409,
+      "name": "timer_settime64",
+      "entry": "sys_timer_settime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:410",
+      "nr": 410,
+      "name": "timerfd_gettime64",
+      "entry": "sys_timerfd_gettime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:411",
+      "nr": 411,
+      "name": "timerfd_settime64",
+      "entry": "sys_timerfd_settime",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:412",
+      "nr": 412,
+      "name": "utimensat_time64",
+      "entry": "sys_utimensat",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:413",
+      "nr": 413,
+      "name": "pselect6_time64",
+      "entry": "sys_pselect6",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:414",
+      "nr": 414,
+      "name": "ppoll_time64",
+      "entry": "sys_ppoll",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:416",
+      "nr": 416,
+      "name": "io_pgetevents_time64",
+      "entry": "sys_io_pgetevents",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:417",
+      "nr": 417,
+      "name": "recvmmsg_time64",
+      "entry": "sys_recvmmsg",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:418",
+      "nr": 418,
+      "name": "mq_timedsend_time64",
+      "entry": "sys_mq_timedsend",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:419",
+      "nr": 419,
+      "name": "mq_timedreceive_time64",
+      "entry": "sys_mq_timedreceive",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:420",
+      "nr": 420,
+      "name": "semtimedop_time64",
+      "entry": "sys_semtimedop",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:421",
+      "nr": 421,
+      "name": "rt_sigtimedwait_time64",
+      "entry": "sys_rt_sigtimedwait",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:422",
+      "nr": 422,
+      "name": "futex_time64",
+      "entry": "sys_futex",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:423",
+      "nr": 423,
+      "name": "sched_rr_get_interval_time64",
+      "entry": "sys_sched_rr_get_interval",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:424",
+      "nr": 424,
+      "name": "pidfd_send_signal",
+      "entry": "sys_pidfd_send_signal",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:425",
+      "nr": 425,
+      "name": "io_uring_setup",
+      "entry": "sys_io_uring_setup",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:426",
+      "nr": 426,
+      "name": "io_uring_enter",
+      "entry": "sys_io_uring_enter",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:427",
+      "nr": 427,
+      "name": "io_uring_register",
+      "entry": "sys_io_uring_register",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:428",
+      "nr": 428,
+      "name": "open_tree",
+      "entry": "sys_open_tree",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:429",
+      "nr": 429,
+      "name": "move_mount",
+      "entry": "sys_move_mount",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:430",
+      "nr": 430,
+      "name": "fsopen",
+      "entry": "sys_fsopen",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:431",
+      "nr": 431,
+      "name": "fsconfig",
+      "entry": "sys_fsconfig",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:432",
+      "nr": 432,
+      "name": "fsmount",
+      "entry": "sys_fsmount",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:433",
+      "nr": 433,
+      "name": "fspick",
+      "entry": "sys_fspick",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:434",
+      "nr": 434,
+      "name": "pidfd_open",
+      "entry": "sys_pidfd_open",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:435",
+      "nr": 435,
+      "name": "clone3",
+      "entry": "sys_clone3",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:436",
+      "nr": 436,
+      "name": "close_range",
+      "entry": "sys_close_range",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:437",
+      "nr": 437,
+      "name": "openat2",
+      "entry": "sys_openat2",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:438",
+      "nr": 438,
+      "name": "pidfd_getfd",
+      "entry": "sys_pidfd_getfd",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:439",
+      "nr": 439,
+      "name": "faccessat2",
+      "entry": "sys_faccessat2",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:440",
+      "nr": 440,
+      "name": "process_madvise",
+      "entry": "sys_process_madvise",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:441",
+      "nr": 441,
+      "name": "epoll_pwait2",
+      "entry": "sys_epoll_pwait2",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:442",
+      "nr": 442,
+      "name": "mount_setattr",
+      "entry": "sys_mount_setattr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:443",
+      "nr": 443,
+      "name": "quotactl_fd",
+      "entry": "sys_quotactl_fd",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:444",
+      "nr": 444,
+      "name": "landlock_create_ruleset",
+      "entry": "sys_landlock_create_ruleset",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:445",
+      "nr": 445,
+      "name": "landlock_add_rule",
+      "entry": "sys_landlock_add_rule",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:446",
+      "nr": 446,
+      "name": "landlock_restrict_self",
+      "entry": "sys_landlock_restrict_self",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:447",
+      "nr": 447,
+      "name": "memfd_secret",
+      "entry": "sys_memfd_secret",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:448",
+      "nr": 448,
+      "name": "process_mrelease",
+      "entry": "sys_process_mrelease",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:449",
+      "nr": 449,
+      "name": "futex_waitv",
+      "entry": "sys_futex_waitv",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:450",
+      "nr": 450,
+      "name": "set_mempolicy_home_node",
+      "entry": "sys_set_mempolicy_home_node",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:451",
+      "nr": 451,
+      "name": "cachestat",
+      "entry": "sys_cachestat",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:452",
+      "nr": 452,
+      "name": "fchmodat2",
+      "entry": "sys_fchmodat2",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:453",
+      "nr": 453,
+      "name": "map_shadow_stack",
+      "entry": "sys_map_shadow_stack",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:454",
+      "nr": 454,
+      "name": "futex_wake",
+      "entry": "sys_futex_wake",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:455",
+      "nr": 455,
+      "name": "futex_wait",
+      "entry": "sys_futex_wait",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:456",
+      "nr": 456,
+      "name": "futex_requeue",
+      "entry": "sys_futex_requeue",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:457",
+      "nr": 457,
+      "name": "statmount",
+      "entry": "sys_statmount",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:458",
+      "nr": 458,
+      "name": "listmount",
+      "entry": "sys_listmount",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:459",
+      "nr": 459,
+      "name": "lsm_get_self_attr",
+      "entry": "sys_lsm_get_self_attr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:460",
+      "nr": 460,
+      "name": "lsm_set_self_attr",
+      "entry": "sys_lsm_set_self_attr",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:461",
+      "nr": 461,
+      "name": "lsm_list_modules",
+      "entry": "sys_lsm_list_modules",
+      "abi": "generic",
+      "description": ""
+    },
+    {
+      "id": "nr:462",
+      "nr": 462,
+      "name": "mseal",
+      "entry": "sys_mseal",
+      "abi": "generic",
+      "description": ""
+    }
+  ]
+}

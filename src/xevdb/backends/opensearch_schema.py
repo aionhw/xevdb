@@ -51,6 +51,32 @@ TABLES: tuple[str, ...] = (
     "prompts",
     "cache",
     "bugs",
+    # RISC-V ISA reference (a standalone, waveform-independent knowledge base)
+    "riscv_instructions",
+    "riscv_registers",
+    "riscv_csrs",
+    "riscv_extensions",
+    "riscv_pseudo",
+    # RISC-V Linux kernel architecture/ABI (parsed from a kernel source tree)
+    "kernel_syscalls",
+    "kernel_traps",
+    "kernel_sbi",
+    "kernel_memmap",
+)
+
+# RISC-V reference tables, as a group for targeted `ingest-riscv --reset`
+# (mirrors RTL_TABLES / SIM_TABLES). These hold static ISA knowledge and are
+# not tied to any VCD/RTL/sim dump.
+RISCV_TABLES: tuple[str, ...] = (
+    "riscv_instructions", "riscv_registers", "riscv_csrs",
+    "riscv_extensions", "riscv_pseudo",
+)
+
+# RISC-V Linux kernel architecture tables, as a group for `ingest-kernel`.
+# Also standalone, waveform-independent (syscall numbers, trap causes, the SBI
+# S<->M ABI, and the virtual-memory layout / boot register ABI).
+KERNEL_TABLES: tuple[str, ...] = (
+    "kernel_syscalls", "kernel_traps", "kernel_sbi", "kernel_memmap",
 )
 
 # Bug-link kind -> the denormalized array field it lives in on a bug document.
@@ -222,6 +248,97 @@ _PROPS: dict[str, dict[str, Any]] = {
         "linked_coverage": {"type": "keyword"},
         "created_at": {"type": "double"},
         "updated_at": {"type": "double"},
+    },
+    # -- RISC-V ISA reference -------------------------------------------------
+    "riscv_instructions": {
+        "id": {"type": "keyword"},            # `<extension>::<name>`
+        "name": {"type": "keyword"},          # exact mnemonic (jalr, addi, ...)
+        "mnemonic": {"type": "keyword"},
+        "extension": {"type": "keyword"},     # RV32I/RV64I/M/A/F/D/C/Zicsr/...
+        "format": {"type": "keyword"},        # R/I/S/B/U/J/C
+        "width": {"type": "long"},            # 32 or 16 (compressed)
+        "mask": {"type": "keyword"},          # hex: fixed-bit mask
+        "match": {"type": "keyword"},         # hex: fixed-bit value
+        "operands": {"type": "keyword"},
+        "syntax": {"type": "text"},
+        "description": {"type": "text"},
+        "pseudo": {"type": "boolean"},
+        "ingested_at": {"type": "double"},
+    },
+    "riscv_registers": {
+        "id": {"type": "keyword"},
+        "name": {"type": "keyword"},          # x0..x31 / f0..f31
+        "abi": {"type": "keyword"},           # zero/ra/sp/a0/...
+        "number": {"type": "long"},
+        "group": {"type": "keyword"},         # GPR / FPR
+        "role": {"type": "text"},
+        "saver": {"type": "keyword"},         # Caller / Callee / —
+        "ingested_at": {"type": "double"},
+    },
+    "riscv_csrs": {
+        "id": {"type": "keyword"},
+        "addr": {"type": "keyword"},          # 0xNNN
+        "name": {"type": "keyword"},          # mstatus/mtvec/mepc/satp/...
+        "privilege": {"type": "keyword"},     # M / S / U
+        "access": {"type": "keyword"},        # RW / RO
+        "description": {"type": "text"},
+        "ingested_at": {"type": "double"},
+    },
+    "riscv_extensions": {
+        "id": {"type": "keyword"},
+        "letter": {"type": "keyword"},        # I/M/A/F/D/C/Zicsr/...
+        "name": {"type": "text", "fields": {"raw": {"type": "keyword"}}},
+        "version": {"type": "keyword"},
+        "description": {"type": "text"},
+        "ingested_at": {"type": "double"},
+    },
+    "riscv_pseudo": {
+        "id": {"type": "keyword"},
+        "name": {"type": "keyword"},          # nop/mv/ret/li/...
+        "expansion": {"type": "keyword"},     # real-instruction expansion
+        "base": {"type": "keyword"},          # underlying real instruction
+        "description": {"type": "text"},
+        "ingested_at": {"type": "double"},
+    },
+    # -- RISC-V Linux kernel architecture / ABI ------------------------------
+    "kernel_syscalls": {
+        "id": {"type": "keyword"},
+        "nr": {"type": "long"},               # syscall number (the value in a7)
+        "name": {"type": "keyword"},          # openat / read / write / ...
+        "entry": {"type": "keyword"},         # sys_xxx kernel entry symbol
+        "abi": {"type": "keyword"},           # generic / riscv
+        "description": {"type": "text"},
+        "ingested_at": {"type": "double"},
+    },
+    "kernel_traps": {
+        "id": {"type": "keyword"},
+        "code": {"type": "long"},             # scause/mcause exception/interrupt code
+        "kind": {"type": "keyword"},          # exception / interrupt
+        "name": {"type": "keyword"},          # EXC_SYSCALL / IRQ_S_TIMER
+        "label": {"type": "text"},
+        "description": {"type": "text"},
+        "ingested_at": {"type": "double"},
+    },
+    "kernel_sbi": {
+        "id": {"type": "keyword"},
+        "kind": {"type": "keyword"},          # extension / function
+        "extension": {"type": "keyword"},     # TIME / IPI / HSM / ...
+        "name": {"type": "keyword"},          # SBI_EXT_HSM_HART_START
+        "eid": {"type": "keyword"},           # hex extension id (extensions)
+        "fid": {"type": "long"},              # function id (functions; -1 for ext)
+        "description": {"type": "text"},
+        "ingested_at": {"type": "double"},
+    },
+    "kernel_memmap": {
+        "id": {"type": "keyword"},
+        "category": {"type": "keyword"},      # vm-layout / boot-abi
+        "mode": {"type": "keyword"},          # Sv39 / Sv48 / Sv57
+        "region": {"type": "keyword"},        # vmalloc / kernel / a0 / ...
+        "start": {"type": "keyword"},
+        "end": {"type": "keyword"},
+        "size": {"type": "keyword"},
+        "description": {"type": "text"},
+        "ingested_at": {"type": "double"},
     },
 }
 

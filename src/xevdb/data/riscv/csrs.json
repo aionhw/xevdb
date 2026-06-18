@@ -1,0 +1,294 @@
+{
+  "spec_version": "20240411",
+  "count": 36,
+  "csrs": [
+    {
+      "id": "0x001",
+      "addr": "0x001",
+      "name": "fflags",
+      "privilege": "U",
+      "access": "RW",
+      "description": "Floating-point accrued exception flags."
+    },
+    {
+      "id": "0x002",
+      "addr": "0x002",
+      "name": "frm",
+      "privilege": "U",
+      "access": "RW",
+      "description": "Floating-point dynamic rounding mode."
+    },
+    {
+      "id": "0x003",
+      "addr": "0x003",
+      "name": "fcsr",
+      "privilege": "U",
+      "access": "RW",
+      "description": "Floating-point control and status register."
+    },
+    {
+      "id": "0xc00",
+      "addr": "0xc00",
+      "name": "cycle",
+      "privilege": "U",
+      "access": "RO",
+      "description": "Cycle counter for RDCYCLE."
+    },
+    {
+      "id": "0xc01",
+      "addr": "0xc01",
+      "name": "time",
+      "privilege": "U",
+      "access": "RO",
+      "description": "Wall-clock time for RDTIME."
+    },
+    {
+      "id": "0xc02",
+      "addr": "0xc02",
+      "name": "instret",
+      "privilege": "U",
+      "access": "RO",
+      "description": "Instructions-retired counter for RDINSTRET."
+    },
+    {
+      "id": "0x100",
+      "addr": "0x100",
+      "name": "sstatus",
+      "privilege": "S",
+      "access": "RW",
+      "description": "Supervisor status register."
+    },
+    {
+      "id": "0x104",
+      "addr": "0x104",
+      "name": "sie",
+      "privilege": "S",
+      "access": "RW",
+      "description": "Supervisor interrupt-enable register."
+    },
+    {
+      "id": "0x105",
+      "addr": "0x105",
+      "name": "stvec",
+      "privilege": "S",
+      "access": "RW",
+      "description": "Supervisor trap-handler base address."
+    },
+    {
+      "id": "0x106",
+      "addr": "0x106",
+      "name": "scounteren",
+      "privilege": "S",
+      "access": "RW",
+      "description": "Supervisor counter enable."
+    },
+    {
+      "id": "0x140",
+      "addr": "0x140",
+      "name": "sscratch",
+      "privilege": "S",
+      "access": "RW",
+      "description": "Scratch register for supervisor trap handlers."
+    },
+    {
+      "id": "0x141",
+      "addr": "0x141",
+      "name": "sepc",
+      "privilege": "S",
+      "access": "RW",
+      "description": "Supervisor exception program counter."
+    },
+    {
+      "id": "0x142",
+      "addr": "0x142",
+      "name": "scause",
+      "privilege": "S",
+      "access": "RW",
+      "description": "Supervisor trap cause."
+    },
+    {
+      "id": "0x143",
+      "addr": "0x143",
+      "name": "stval",
+      "privilege": "S",
+      "access": "RW",
+      "description": "Supervisor bad address or instruction."
+    },
+    {
+      "id": "0x144",
+      "addr": "0x144",
+      "name": "sip",
+      "privilege": "S",
+      "access": "RW",
+      "description": "Supervisor interrupt pending."
+    },
+    {
+      "id": "0x180",
+      "addr": "0x180",
+      "name": "satp",
+      "privilege": "S",
+      "access": "RW",
+      "description": "Supervisor address translation and protection."
+    },
+    {
+      "id": "0xf11",
+      "addr": "0xf11",
+      "name": "mvendorid",
+      "privilege": "M",
+      "access": "RO",
+      "description": "Vendor ID."
+    },
+    {
+      "id": "0xf12",
+      "addr": "0xf12",
+      "name": "marchid",
+      "privilege": "M",
+      "access": "RO",
+      "description": "Architecture ID."
+    },
+    {
+      "id": "0xf13",
+      "addr": "0xf13",
+      "name": "mimpid",
+      "privilege": "M",
+      "access": "RO",
+      "description": "Implementation ID."
+    },
+    {
+      "id": "0xf14",
+      "addr": "0xf14",
+      "name": "mhartid",
+      "privilege": "M",
+      "access": "RO",
+      "description": "Hardware thread ID."
+    },
+    {
+      "id": "0x300",
+      "addr": "0x300",
+      "name": "mstatus",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Machine status register."
+    },
+    {
+      "id": "0x301",
+      "addr": "0x301",
+      "name": "misa",
+      "privilege": "M",
+      "access": "RW",
+      "description": "ISA and extensions."
+    },
+    {
+      "id": "0x302",
+      "addr": "0x302",
+      "name": "medeleg",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Machine exception delegation."
+    },
+    {
+      "id": "0x303",
+      "addr": "0x303",
+      "name": "mideleg",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Machine interrupt delegation."
+    },
+    {
+      "id": "0x304",
+      "addr": "0x304",
+      "name": "mie",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Machine interrupt-enable register."
+    },
+    {
+      "id": "0x305",
+      "addr": "0x305",
+      "name": "mtvec",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Machine trap-handler base address."
+    },
+    {
+      "id": "0x306",
+      "addr": "0x306",
+      "name": "mcounteren",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Machine counter enable."
+    },
+    {
+      "id": "0x340",
+      "addr": "0x340",
+      "name": "mscratch",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Scratch register for machine trap handlers."
+    },
+    {
+      "id": "0x341",
+      "addr": "0x341",
+      "name": "mepc",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Machine exception program counter."
+    },
+    {
+      "id": "0x342",
+      "addr": "0x342",
+      "name": "mcause",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Machine trap cause."
+    },
+    {
+      "id": "0x343",
+      "addr": "0x343",
+      "name": "mtval",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Machine bad address or instruction."
+    },
+    {
+      "id": "0x344",
+      "addr": "0x344",
+      "name": "mip",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Machine interrupt pending."
+    },
+    {
+      "id": "0x3a0",
+      "addr": "0x3a0",
+      "name": "pmpcfg0",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Physical memory protection configuration."
+    },
+    {
+      "id": "0x3b0",
+      "addr": "0x3b0",
+      "name": "pmpaddr0",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Physical memory protection address register 0."
+    },
+    {
+      "id": "0x7b0",
+      "addr": "0x7b0",
+      "name": "dcsr",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Debug control and status register."
+    },
+    {
+      "id": "0x7b1",
+      "addr": "0x7b1",
+      "name": "dpc",
+      "privilege": "M",
+      "access": "RW",
+      "description": "Debug program counter."
+    }
+  ]
+}

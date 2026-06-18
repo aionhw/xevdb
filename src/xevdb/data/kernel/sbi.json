@@ -1,0 +1,483 @@
+{
+  "kernel_version": "v6.12",
+  "count": 53,
+  "sbi": [
+    {
+      "id": "ext:0_1_SET_TIMER",
+      "kind": "extension",
+      "extension": "0_1_SET_TIMER",
+      "name": "SBI_EXT_0_1_SET_TIMER",
+      "eid": "0x0",
+      "fid": -1,
+      "description": "0 1 set timer"
+    },
+    {
+      "id": "ext:0_1_CONSOLE_PUTCHAR",
+      "kind": "extension",
+      "extension": "0_1_CONSOLE_PUTCHAR",
+      "name": "SBI_EXT_0_1_CONSOLE_PUTCHAR",
+      "eid": "0x1",
+      "fid": -1,
+      "description": "0 1 console putchar"
+    },
+    {
+      "id": "ext:0_1_CONSOLE_GETCHAR",
+      "kind": "extension",
+      "extension": "0_1_CONSOLE_GETCHAR",
+      "name": "SBI_EXT_0_1_CONSOLE_GETCHAR",
+      "eid": "0x2",
+      "fid": -1,
+      "description": "0 1 console getchar"
+    },
+    {
+      "id": "ext:0_1_CLEAR_IPI",
+      "kind": "extension",
+      "extension": "0_1_CLEAR_IPI",
+      "name": "SBI_EXT_0_1_CLEAR_IPI",
+      "eid": "0x3",
+      "fid": -1,
+      "description": "0 1 clear ipi"
+    },
+    {
+      "id": "ext:0_1_SEND_IPI",
+      "kind": "extension",
+      "extension": "0_1_SEND_IPI",
+      "name": "SBI_EXT_0_1_SEND_IPI",
+      "eid": "0x4",
+      "fid": -1,
+      "description": "0 1 send ipi"
+    },
+    {
+      "id": "ext:0_1_REMOTE_FENCE_I",
+      "kind": "extension",
+      "extension": "0_1_REMOTE_FENCE_I",
+      "name": "SBI_EXT_0_1_REMOTE_FENCE_I",
+      "eid": "0x5",
+      "fid": -1,
+      "description": "0 1 remote fence i"
+    },
+    {
+      "id": "ext:0_1_REMOTE_SFENCE_VMA",
+      "kind": "extension",
+      "extension": "0_1_REMOTE_SFENCE_VMA",
+      "name": "SBI_EXT_0_1_REMOTE_SFENCE_VMA",
+      "eid": "0x6",
+      "fid": -1,
+      "description": "0 1 remote sfence vma"
+    },
+    {
+      "id": "ext:0_1_REMOTE_SFENCE_VMA_ASID",
+      "kind": "extension",
+      "extension": "0_1_REMOTE_SFENCE_VMA_ASID",
+      "name": "SBI_EXT_0_1_REMOTE_SFENCE_VMA_ASID",
+      "eid": "0x7",
+      "fid": -1,
+      "description": "0 1 remote sfence vma asid"
+    },
+    {
+      "id": "ext:0_1_SHUTDOWN",
+      "kind": "extension",
+      "extension": "0_1_SHUTDOWN",
+      "name": "SBI_EXT_0_1_SHUTDOWN",
+      "eid": "0x8",
+      "fid": -1,
+      "description": "0 1 shutdown"
+    },
+    {
+      "id": "ext:BASE",
+      "kind": "extension",
+      "extension": "BASE",
+      "name": "SBI_EXT_BASE",
+      "eid": "0x10",
+      "fid": -1,
+      "description": "Base extension (probe extensions, get impl/spec info)."
+    },
+    {
+      "id": "ext:TIME",
+      "kind": "extension",
+      "extension": "TIME",
+      "name": "SBI_EXT_TIME",
+      "eid": "0x54494d45",
+      "fid": -1,
+      "description": "Timer extension (set the timer)."
+    },
+    {
+      "id": "ext:IPI",
+      "kind": "extension",
+      "extension": "IPI",
+      "name": "SBI_EXT_IPI",
+      "eid": "0x735049",
+      "fid": -1,
+      "description": "Inter-processor interrupt extension."
+    },
+    {
+      "id": "ext:RFENCE",
+      "kind": "extension",
+      "extension": "RFENCE",
+      "name": "SBI_EXT_RFENCE",
+      "eid": "0x52464e43",
+      "fid": -1,
+      "description": "Remote fence extension (remote TLB/instruction fences)."
+    },
+    {
+      "id": "ext:HSM",
+      "kind": "extension",
+      "extension": "HSM",
+      "name": "SBI_EXT_HSM",
+      "eid": "0x48534d",
+      "fid": -1,
+      "description": "Hart state management (start/stop/suspend harts)."
+    },
+    {
+      "id": "ext:SRST",
+      "kind": "extension",
+      "extension": "SRST",
+      "name": "SBI_EXT_SRST",
+      "eid": "0x53525354",
+      "fid": -1,
+      "description": "System reset (shutdown/cold/warm reboot)."
+    },
+    {
+      "id": "ext:SUSP",
+      "kind": "extension",
+      "extension": "SUSP",
+      "name": "SBI_EXT_SUSP",
+      "eid": "0x53555350",
+      "fid": -1,
+      "description": "System suspend extension."
+    },
+    {
+      "id": "ext:PMU",
+      "kind": "extension",
+      "extension": "PMU",
+      "name": "SBI_EXT_PMU",
+      "eid": "0x504d55",
+      "fid": -1,
+      "description": "Performance monitoring unit extension."
+    },
+    {
+      "id": "ext:DBCN",
+      "kind": "extension",
+      "extension": "DBCN",
+      "name": "SBI_EXT_DBCN",
+      "eid": "0x4442434e",
+      "fid": -1,
+      "description": "Debug console extension."
+    },
+    {
+      "id": "ext:STA",
+      "kind": "extension",
+      "extension": "STA",
+      "name": "SBI_EXT_STA",
+      "eid": "0x535441",
+      "fid": -1,
+      "description": "Steal-time accounting extension."
+    },
+    {
+      "id": "fn:BASE:0",
+      "kind": "function",
+      "extension": "BASE",
+      "name": "SBI_EXT_BASE_GET_SPEC_VERSION",
+      "eid": "",
+      "fid": 0,
+      "description": "Get spec version"
+    },
+    {
+      "id": "fn:BASE:1",
+      "kind": "function",
+      "extension": "BASE",
+      "name": "SBI_EXT_BASE_GET_IMP_ID",
+      "eid": "",
+      "fid": 1,
+      "description": "Get imp id"
+    },
+    {
+      "id": "fn:BASE:2",
+      "kind": "function",
+      "extension": "BASE",
+      "name": "SBI_EXT_BASE_GET_IMP_VERSION",
+      "eid": "",
+      "fid": 2,
+      "description": "Get imp version"
+    },
+    {
+      "id": "fn:BASE:3",
+      "kind": "function",
+      "extension": "BASE",
+      "name": "SBI_EXT_BASE_PROBE_EXT",
+      "eid": "",
+      "fid": 3,
+      "description": "Probe ext"
+    },
+    {
+      "id": "fn:BASE:4",
+      "kind": "function",
+      "extension": "BASE",
+      "name": "SBI_EXT_BASE_GET_MVENDORID",
+      "eid": "",
+      "fid": 4,
+      "description": "Get mvendorid"
+    },
+    {
+      "id": "fn:BASE:5",
+      "kind": "function",
+      "extension": "BASE",
+      "name": "SBI_EXT_BASE_GET_MARCHID",
+      "eid": "",
+      "fid": 5,
+      "description": "Get marchid"
+    },
+    {
+      "id": "fn:BASE:6",
+      "kind": "function",
+      "extension": "BASE",
+      "name": "SBI_EXT_BASE_GET_MIMPID",
+      "eid": "",
+      "fid": 6,
+      "description": "Get mimpid"
+    },
+    {
+      "id": "fn:TIME:0",
+      "kind": "function",
+      "extension": "TIME",
+      "name": "SBI_EXT_TIME_SET_TIMER",
+      "eid": "",
+      "fid": 0,
+      "description": "Set timer"
+    },
+    {
+      "id": "fn:IPI:0",
+      "kind": "function",
+      "extension": "IPI",
+      "name": "SBI_EXT_IPI_SEND_IPI",
+      "eid": "",
+      "fid": 0,
+      "description": "Send ipi"
+    },
+    {
+      "id": "fn:RFENCE:0",
+      "kind": "function",
+      "extension": "RFENCE",
+      "name": "SBI_EXT_RFENCE_REMOTE_FENCE_I",
+      "eid": "",
+      "fid": 0,
+      "description": "Remote fence i"
+    },
+    {
+      "id": "fn:RFENCE:1",
+      "kind": "function",
+      "extension": "RFENCE",
+      "name": "SBI_EXT_RFENCE_REMOTE_SFENCE_VMA",
+      "eid": "",
+      "fid": 1,
+      "description": "Remote sfence vma"
+    },
+    {
+      "id": "fn:RFENCE:2",
+      "kind": "function",
+      "extension": "RFENCE",
+      "name": "SBI_EXT_RFENCE_REMOTE_SFENCE_VMA_ASID",
+      "eid": "",
+      "fid": 2,
+      "description": "Remote sfence vma asid"
+    },
+    {
+      "id": "fn:RFENCE:3",
+      "kind": "function",
+      "extension": "RFENCE",
+      "name": "SBI_EXT_RFENCE_REMOTE_HFENCE_GVMA_VMID",
+      "eid": "",
+      "fid": 3,
+      "description": "Remote hfence gvma vmid"
+    },
+    {
+      "id": "fn:RFENCE:4",
+      "kind": "function",
+      "extension": "RFENCE",
+      "name": "SBI_EXT_RFENCE_REMOTE_HFENCE_GVMA",
+      "eid": "",
+      "fid": 4,
+      "description": "Remote hfence gvma"
+    },
+    {
+      "id": "fn:RFENCE:5",
+      "kind": "function",
+      "extension": "RFENCE",
+      "name": "SBI_EXT_RFENCE_REMOTE_HFENCE_VVMA_ASID",
+      "eid": "",
+      "fid": 5,
+      "description": "Remote hfence vvma asid"
+    },
+    {
+      "id": "fn:RFENCE:6",
+      "kind": "function",
+      "extension": "RFENCE",
+      "name": "SBI_EXT_RFENCE_REMOTE_HFENCE_VVMA",
+      "eid": "",
+      "fid": 6,
+      "description": "Remote hfence vvma"
+    },
+    {
+      "id": "fn:HSM:0",
+      "kind": "function",
+      "extension": "HSM",
+      "name": "SBI_EXT_HSM_HART_START",
+      "eid": "",
+      "fid": 0,
+      "description": "Hart start"
+    },
+    {
+      "id": "fn:HSM:1",
+      "kind": "function",
+      "extension": "HSM",
+      "name": "SBI_EXT_HSM_HART_STOP",
+      "eid": "",
+      "fid": 1,
+      "description": "Hart stop"
+    },
+    {
+      "id": "fn:HSM:2",
+      "kind": "function",
+      "extension": "HSM",
+      "name": "SBI_EXT_HSM_HART_STATUS",
+      "eid": "",
+      "fid": 2,
+      "description": "Hart status"
+    },
+    {
+      "id": "fn:HSM:3",
+      "kind": "function",
+      "extension": "HSM",
+      "name": "SBI_EXT_HSM_HART_SUSPEND",
+      "eid": "",
+      "fid": 3,
+      "description": "Hart suspend"
+    },
+    {
+      "id": "fn:SRST:0",
+      "kind": "function",
+      "extension": "SRST",
+      "name": "SBI_EXT_SRST_RESET",
+      "eid": "",
+      "fid": 0,
+      "description": "Reset"
+    },
+    {
+      "id": "fn:SUSP:0",
+      "kind": "function",
+      "extension": "SUSP",
+      "name": "SBI_EXT_SUSP_SYSTEM_SUSPEND",
+      "eid": "",
+      "fid": 0,
+      "description": "System suspend"
+    },
+    {
+      "id": "fn:PMU:0",
+      "kind": "function",
+      "extension": "PMU",
+      "name": "SBI_EXT_PMU_NUM_COUNTERS",
+      "eid": "",
+      "fid": 0,
+      "description": "Num counters"
+    },
+    {
+      "id": "fn:PMU:1",
+      "kind": "function",
+      "extension": "PMU",
+      "name": "SBI_EXT_PMU_COUNTER_GET_INFO",
+      "eid": "",
+      "fid": 1,
+      "description": "Counter get info"
+    },
+    {
+      "id": "fn:PMU:2",
+      "kind": "function",
+      "extension": "PMU",
+      "name": "SBI_EXT_PMU_COUNTER_CFG_MATCH",
+      "eid": "",
+      "fid": 2,
+      "description": "Counter cfg match"
+    },
+    {
+      "id": "fn:PMU:3",
+      "kind": "function",
+      "extension": "PMU",
+      "name": "SBI_EXT_PMU_COUNTER_START",
+      "eid": "",
+      "fid": 3,
+      "description": "Counter start"
+    },
+    {
+      "id": "fn:PMU:4",
+      "kind": "function",
+      "extension": "PMU",
+      "name": "SBI_EXT_PMU_COUNTER_STOP",
+      "eid": "",
+      "fid": 4,
+      "description": "Counter stop"
+    },
+    {
+      "id": "fn:PMU:5",
+      "kind": "function",
+      "extension": "PMU",
+      "name": "SBI_EXT_PMU_COUNTER_FW_READ",
+      "eid": "",
+      "fid": 5,
+      "description": "Counter fw read"
+    },
+    {
+      "id": "fn:PMU:6",
+      "kind": "function",
+      "extension": "PMU",
+      "name": "SBI_EXT_PMU_COUNTER_FW_READ_HI",
+      "eid": "",
+      "fid": 6,
+      "description": "Counter fw read hi"
+    },
+    {
+      "id": "fn:PMU:7",
+      "kind": "function",
+      "extension": "PMU",
+      "name": "SBI_EXT_PMU_SNAPSHOT_SET_SHMEM",
+      "eid": "",
+      "fid": 7,
+      "description": "Snapshot set shmem"
+    },
+    {
+      "id": "fn:DBCN:0",
+      "kind": "function",
+      "extension": "DBCN",
+      "name": "SBI_EXT_DBCN_CONSOLE_WRITE",
+      "eid": "",
+      "fid": 0,
+      "description": "Console write"
+    },
+    {
+      "id": "fn:DBCN:1",
+      "kind": "function",
+      "extension": "DBCN",
+      "name": "SBI_EXT_DBCN_CONSOLE_READ",
+      "eid": "",
+      "fid": 1,
+      "description": "Console read"
+    },
+    {
+      "id": "fn:DBCN:2",
+      "kind": "function",
+      "extension": "DBCN",
+      "name": "SBI_EXT_DBCN_CONSOLE_WRITE_BYTE",
+      "eid": "",
+      "fid": 2,
+      "description": "Console write byte"
+    },
+    {
+      "id": "fn:STA:0",
+      "kind": "function",
+      "extension": "STA",
+      "name": "SBI_EXT_STA_STEAL_TIME_SET_SHMEM",
+      "eid": "",
+      "fid": 0,
+      "description": "Steal time set shmem"
+    }
+  ]
+}

@@ -386,7 +386,28 @@ xevdb prompt run d.xevdb instance_tree --arg module=top
 
 ---
 
-## 12. Command reference
+## 12. RISC-V & kernel reference (OpenSearch)
+
+Beyond a specific dump, xevdb can host a standalone, searchable **RISC-V
+reference** on OpenSearch — the ISA (instructions, registers, CSRs, extensions,
+pseudo-instructions) and the **Linux kernel architecture** (syscalls, trap
+causes, the SBI ABI, the VM layout). It needs no waveform; build it once and
+query by hand or from an AI agent (`a7=64` → `write`, `scause=13` → load page
+fault, `0x305` → `mtvec`, `jalr x0,0(ra)` → `ret`).
+
+```sh
+xevdb --backend opensearch ingest-riscv  riscv.ptr.json --reset
+xevdb --backend opensearch ingest-kernel riscv.ptr.json --reset   # same pointer is fine
+xevdb prompt run riscv.ptr.json riscv_instr_by_name  --arg name=jalr
+xevdb prompt run riscv.ptr.json kernel_syscall_by_nr --arg nr=64
+```
+
+Step-by-step: [`docs/riscv-reference-tutorial.md`](docs/riscv-reference-tutorial.md)
+and [`docs/kernel-reference-tutorial.md`](docs/kernel-reference-tutorial.md).
+
+---
+
+## 13. Command reference
 
 ```
 build      <vcd> [--db PATH] [--reset] [--no-seed]
@@ -400,6 +421,9 @@ modules    <db> [--filter NAME] [--limit N] [--json]
 show       <db> <target> [--full] [--context N] [--no-line-numbers]
 
 ingest-sim <db> <log> [--name N] [--keep-all] [--reset]
+
+ingest-riscv  <ptr> [--data DIR] [--reset] [--no-seed]                 # OpenSearch
+ingest-kernel <ptr> [--kernel-tree DIR] [--data DIR] [--reset] [--no-seed]  # OpenSearch
 
 xz summary   <db> [--json]
 xz first     <db> [--limit N] [--json]

@@ -1,0 +1,238 @@
+{
+  "kernel_version": "v6.12",
+  "count": 29,
+  "traps": [
+    {
+      "id": "exception:0",
+      "code": 0,
+      "kind": "exception",
+      "name": "EXC_INST_MISALIGNED",
+      "label": "Inst misaligned",
+      "description": "Instruction address misaligned."
+    },
+    {
+      "id": "exception:1",
+      "code": 1,
+      "kind": "exception",
+      "name": "EXC_INST_ACCESS",
+      "label": "Inst access",
+      "description": "Instruction access fault."
+    },
+    {
+      "id": "exception:2",
+      "code": 2,
+      "kind": "exception",
+      "name": "EXC_INST_ILLEGAL",
+      "label": "Inst illegal",
+      "description": "Illegal instruction."
+    },
+    {
+      "id": "exception:3",
+      "code": 3,
+      "kind": "exception",
+      "name": "EXC_BREAKPOINT",
+      "label": "Breakpoint",
+      "description": "Breakpoint (ebreak)."
+    },
+    {
+      "id": "exception:4",
+      "code": 4,
+      "kind": "exception",
+      "name": "EXC_LOAD_MISALIGNED",
+      "label": "Load misaligned",
+      "description": "Load address misaligned."
+    },
+    {
+      "id": "exception:5",
+      "code": 5,
+      "kind": "exception",
+      "name": "EXC_LOAD_ACCESS",
+      "label": "Load access",
+      "description": "Load access fault."
+    },
+    {
+      "id": "exception:6",
+      "code": 6,
+      "kind": "exception",
+      "name": "EXC_STORE_MISALIGNED",
+      "label": "Store misaligned",
+      "description": "Store/AMO address misaligned."
+    },
+    {
+      "id": "exception:7",
+      "code": 7,
+      "kind": "exception",
+      "name": "EXC_STORE_ACCESS",
+      "label": "Store access",
+      "description": "Store/AMO access fault."
+    },
+    {
+      "id": "exception:8",
+      "code": 8,
+      "kind": "exception",
+      "name": "EXC_SYSCALL",
+      "label": "Syscall",
+      "description": "Environment call (ecall) from U-mode."
+    },
+    {
+      "id": "exception:9",
+      "code": 9,
+      "kind": "exception",
+      "name": "EXC_HYPERVISOR_SYSCALL",
+      "label": "Hypervisor syscall",
+      "description": "Environment call from VS-mode."
+    },
+    {
+      "id": "exception:10",
+      "code": 10,
+      "kind": "exception",
+      "name": "EXC_SUPERVISOR_SYSCALL",
+      "label": "Supervisor syscall",
+      "description": "Environment call from S-mode."
+    },
+    {
+      "id": "exception:12",
+      "code": 12,
+      "kind": "exception",
+      "name": "EXC_INST_PAGE_FAULT",
+      "label": "Inst page fault",
+      "description": "Instruction page fault."
+    },
+    {
+      "id": "exception:13",
+      "code": 13,
+      "kind": "exception",
+      "name": "EXC_LOAD_PAGE_FAULT",
+      "label": "Load page fault",
+      "description": "Load page fault."
+    },
+    {
+      "id": "exception:15",
+      "code": 15,
+      "kind": "exception",
+      "name": "EXC_STORE_PAGE_FAULT",
+      "label": "Store page fault",
+      "description": "Store/AMO page fault."
+    },
+    {
+      "id": "exception:20",
+      "code": 20,
+      "kind": "exception",
+      "name": "EXC_INST_GUEST_PAGE_FAULT",
+      "label": "Inst guest page fault",
+      "description": "Instruction guest-page fault."
+    },
+    {
+      "id": "exception:21",
+      "code": 21,
+      "kind": "exception",
+      "name": "EXC_LOAD_GUEST_PAGE_FAULT",
+      "label": "Load guest page fault",
+      "description": "Load guest-page fault."
+    },
+    {
+      "id": "exception:22",
+      "code": 22,
+      "kind": "exception",
+      "name": "EXC_VIRTUAL_INST_FAULT",
+      "label": "Virtual inst fault",
+      "description": "Virtual instruction fault."
+    },
+    {
+      "id": "exception:23",
+      "code": 23,
+      "kind": "exception",
+      "name": "EXC_STORE_GUEST_PAGE_FAULT",
+      "label": "Store guest page fault",
+      "description": "Store/AMO guest-page fault."
+    },
+    {
+      "id": "interrupt:1",
+      "code": 1,
+      "kind": "interrupt",
+      "name": "IRQ_S_SOFT",
+      "label": "S soft",
+      "description": "Supervisor software interrupt."
+    },
+    {
+      "id": "interrupt:2",
+      "code": 2,
+      "kind": "interrupt",
+      "name": "IRQ_VS_SOFT",
+      "label": "Vs soft",
+      "description": "Virtual supervisor software interrupt."
+    },
+    {
+      "id": "interrupt:3",
+      "code": 3,
+      "kind": "interrupt",
+      "name": "IRQ_M_SOFT",
+      "label": "M soft",
+      "description": "Machine software interrupt."
+    },
+    {
+      "id": "interrupt:5",
+      "code": 5,
+      "kind": "interrupt",
+      "name": "IRQ_S_TIMER",
+      "label": "S timer",
+      "description": "Supervisor timer interrupt."
+    },
+    {
+      "id": "interrupt:6",
+      "code": 6,
+      "kind": "interrupt",
+      "name": "IRQ_VS_TIMER",
+      "label": "Vs timer",
+      "description": "Virtual supervisor timer interrupt."
+    },
+    {
+      "id": "interrupt:7",
+      "code": 7,
+      "kind": "interrupt",
+      "name": "IRQ_M_TIMER",
+      "label": "M timer",
+      "description": "Machine timer interrupt."
+    },
+    {
+      "id": "interrupt:9",
+      "code": 9,
+      "kind": "interrupt",
+      "name": "IRQ_S_EXT",
+      "label": "S ext",
+      "description": "Supervisor external interrupt."
+    },
+    {
+      "id": "interrupt:10",
+      "code": 10,
+      "kind": "interrupt",
+      "name": "IRQ_VS_EXT",
+      "label": "Vs ext",
+      "description": "Virtual supervisor external interrupt."
+    },
+    {
+      "id": "interrupt:11",
+      "code": 11,
+      "kind": "interrupt",
+      "name": "IRQ_M_EXT",
+      "label": "M ext",
+      "description": "Machine external interrupt."
+    },
+    {
+      "id": "interrupt:12",
+      "code": 12,
+      "kind": "interrupt",
+      "name": "IRQ_S_GEXT",
+      "label": "S gext",
+      "description": "Supervisor guest external interrupt."
+    },
+    {
+      "id": "interrupt:13",
+      "code": 13,
+      "kind": "interrupt",
+      "name": "IRQ_PMU_OVF",
+      "label": "Pmu ovf",
+      "description": "Performance counter overflow interrupt."
+    }
+  ]
+}

@@ -1,0 +1,582 @@
+{
+  "spec_version": "20240411",
+  "count": 64,
+  "registers": [
+    {
+      "id": "x0",
+      "name": "x0",
+      "abi": "zero",
+      "number": 0,
+      "group": "GPR",
+      "role": "Hard-wired zero",
+      "saver": "\u2014"
+    },
+    {
+      "id": "x1",
+      "name": "x1",
+      "abi": "ra",
+      "number": 1,
+      "group": "GPR",
+      "role": "Return address",
+      "saver": "Caller"
+    },
+    {
+      "id": "x2",
+      "name": "x2",
+      "abi": "sp",
+      "number": 2,
+      "group": "GPR",
+      "role": "Stack pointer",
+      "saver": "Callee"
+    },
+    {
+      "id": "x3",
+      "name": "x3",
+      "abi": "gp",
+      "number": 3,
+      "group": "GPR",
+      "role": "Global pointer",
+      "saver": "\u2014"
+    },
+    {
+      "id": "x4",
+      "name": "x4",
+      "abi": "tp",
+      "number": 4,
+      "group": "GPR",
+      "role": "Thread pointer",
+      "saver": "\u2014"
+    },
+    {
+      "id": "x5",
+      "name": "x5",
+      "abi": "t0",
+      "number": 5,
+      "group": "GPR",
+      "role": "Temporary / alternate link",
+      "saver": "Caller"
+    },
+    {
+      "id": "x6",
+      "name": "x6",
+      "abi": "t1",
+      "number": 6,
+      "group": "GPR",
+      "role": "Temporary",
+      "saver": "Caller"
+    },
+    {
+      "id": "x7",
+      "name": "x7",
+      "abi": "t2",
+      "number": 7,
+      "group": "GPR",
+      "role": "Temporary",
+      "saver": "Caller"
+    },
+    {
+      "id": "x8",
+      "name": "x8",
+      "abi": "s0",
+      "number": 8,
+      "group": "GPR",
+      "role": "Saved register / frame pointer (fp)",
+      "saver": "Callee"
+    },
+    {
+      "id": "x9",
+      "name": "x9",
+      "abi": "s1",
+      "number": 9,
+      "group": "GPR",
+      "role": "Saved register",
+      "saver": "Callee"
+    },
+    {
+      "id": "x10",
+      "name": "x10",
+      "abi": "a0",
+      "number": 10,
+      "group": "GPR",
+      "role": "Function argument / return value 0",
+      "saver": "Caller"
+    },
+    {
+      "id": "x11",
+      "name": "x11",
+      "abi": "a1",
+      "number": 11,
+      "group": "GPR",
+      "role": "Function argument / return value 1",
+      "saver": "Caller"
+    },
+    {
+      "id": "x12",
+      "name": "x12",
+      "abi": "a2",
+      "number": 12,
+      "group": "GPR",
+      "role": "Function argument 2",
+      "saver": "Caller"
+    },
+    {
+      "id": "x13",
+      "name": "x13",
+      "abi": "a3",
+      "number": 13,
+      "group": "GPR",
+      "role": "Function argument 3",
+      "saver": "Caller"
+    },
+    {
+      "id": "x14",
+      "name": "x14",
+      "abi": "a4",
+      "number": 14,
+      "group": "GPR",
+      "role": "Function argument 4",
+      "saver": "Caller"
+    },
+    {
+      "id": "x15",
+      "name": "x15",
+      "abi": "a5",
+      "number": 15,
+      "group": "GPR",
+      "role": "Function argument 5",
+      "saver": "Caller"
+    },
+    {
+      "id": "x16",
+      "name": "x16",
+      "abi": "a6",
+      "number": 16,
+      "group": "GPR",
+      "role": "Function argument 6",
+      "saver": "Caller"
+    },
+    {
+      "id": "x17",
+      "name": "x17",
+      "abi": "a7",
+      "number": 17,
+      "group": "GPR",
+      "role": "Function argument 7 / syscall number",
+      "saver": "Caller"
+    },
+    {
+      "id": "x18",
+      "name": "x18",
+      "abi": "s2",
+      "number": 18,
+      "group": "GPR",
+      "role": "Saved register",
+      "saver": "Callee"
+    },
+    {
+      "id": "x19",
+      "name": "x19",
+      "abi": "s3",
+      "number": 19,
+      "group": "GPR",
+      "role": "Saved register",
+      "saver": "Callee"
+    },
+    {
+      "id": "x20",
+      "name": "x20",
+      "abi": "s4",
+      "number": 20,
+      "group": "GPR",
+      "role": "Saved register",
+      "saver": "Callee"
+    },
+    {
+      "id": "x21",
+      "name": "x21",
+      "abi": "s5",
+      "number": 21,
+      "group": "GPR",
+      "role": "Saved register",
+      "saver": "Callee"
+    },
+    {
+      "id": "x22",
+      "name": "x22",
+      "abi": "s6",
+      "number": 22,
+      "group": "GPR",
+      "role": "Saved register",
+      "saver": "Callee"
+    },
+    {
+      "id": "x23",
+      "name": "x23",
+      "abi": "s7",
+      "number": 23,
+      "group": "GPR",
+      "role": "Saved register",
+      "saver": "Callee"
+    },
+    {
+      "id": "x24",
+      "name": "x24",
+      "abi": "s8",
+      "number": 24,
+      "group": "GPR",
+      "role": "Saved register",
+      "saver": "Callee"
+    },
+    {
+      "id": "x25",
+      "name": "x25",
+      "abi": "s9",
+      "number": 25,
+      "group": "GPR",
+      "role": "Saved register",
+      "saver": "Callee"
+    },
+    {
+      "id": "x26",
+      "name": "x26",
+      "abi": "s10",
+      "number": 26,
+      "group": "GPR",
+      "role": "Saved register",
+      "saver": "Callee"
+    },
+    {
+      "id": "x27",
+      "name": "x27",
+      "abi": "s11",
+      "number": 27,
+      "group": "GPR",
+      "role": "Saved register",
+      "saver": "Callee"
+    },
+    {
+      "id": "x28",
+      "name": "x28",
+      "abi": "t3",
+      "number": 28,
+      "group": "GPR",
+      "role": "Temporary",
+      "saver": "Caller"
+    },
+    {
+      "id": "x29",
+      "name": "x29",
+      "abi": "t4",
+      "number": 29,
+      "group": "GPR",
+      "role": "Temporary",
+      "saver": "Caller"
+    },
+    {
+      "id": "x30",
+      "name": "x30",
+      "abi": "t5",
+      "number": 30,
+      "group": "GPR",
+      "role": "Temporary",
+      "saver": "Caller"
+    },
+    {
+      "id": "x31",
+      "name": "x31",
+      "abi": "t6",
+      "number": 31,
+      "group": "GPR",
+      "role": "Temporary",
+      "saver": "Caller"
+    },
+    {
+      "id": "f0",
+      "name": "f0",
+      "abi": "ft0",
+      "number": 0,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f1",
+      "name": "f1",
+      "abi": "ft1",
+      "number": 1,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f2",
+      "name": "f2",
+      "abi": "ft2",
+      "number": 2,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f3",
+      "name": "f3",
+      "abi": "ft3",
+      "number": 3,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f4",
+      "name": "f4",
+      "abi": "ft4",
+      "number": 4,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f5",
+      "name": "f5",
+      "abi": "ft5",
+      "number": 5,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f6",
+      "name": "f6",
+      "abi": "ft6",
+      "number": 6,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f7",
+      "name": "f7",
+      "abi": "ft7",
+      "number": 7,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f8",
+      "name": "f8",
+      "abi": "fs0",
+      "number": 8,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Callee"
+    },
+    {
+      "id": "f9",
+      "name": "f9",
+      "abi": "fs1",
+      "number": 9,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Callee"
+    },
+    {
+      "id": "f10",
+      "name": "f10",
+      "abi": "fa0",
+      "number": 10,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f11",
+      "name": "f11",
+      "abi": "fa1",
+      "number": 11,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f12",
+      "name": "f12",
+      "abi": "fa2",
+      "number": 12,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f13",
+      "name": "f13",
+      "abi": "fa3",
+      "number": 13,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f14",
+      "name": "f14",
+      "abi": "fa4",
+      "number": 14,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f15",
+      "name": "f15",
+      "abi": "fa5",
+      "number": 15,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f16",
+      "name": "f16",
+      "abi": "fa6",
+      "number": 16,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f17",
+      "name": "f17",
+      "abi": "fa7",
+      "number": 17,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f18",
+      "name": "f18",
+      "abi": "fs2",
+      "number": 18,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Callee"
+    },
+    {
+      "id": "f19",
+      "name": "f19",
+      "abi": "fs3",
+      "number": 19,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Callee"
+    },
+    {
+      "id": "f20",
+      "name": "f20",
+      "abi": "fs4",
+      "number": 20,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Callee"
+    },
+    {
+      "id": "f21",
+      "name": "f21",
+      "abi": "fs5",
+      "number": 21,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Callee"
+    },
+    {
+      "id": "f22",
+      "name": "f22",
+      "abi": "fs6",
+      "number": 22,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Callee"
+    },
+    {
+      "id": "f23",
+      "name": "f23",
+      "abi": "fs7",
+      "number": 23,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Callee"
+    },
+    {
+      "id": "f24",
+      "name": "f24",
+      "abi": "fs8",
+      "number": 24,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Callee"
+    },
+    {
+      "id": "f25",
+      "name": "f25",
+      "abi": "fs9",
+      "number": 25,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Callee"
+    },
+    {
+      "id": "f26",
+      "name": "f26",
+      "abi": "fs10",
+      "number": 26,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Callee"
+    },
+    {
+      "id": "f27",
+      "name": "f27",
+      "abi": "fs11",
+      "number": 27,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Callee"
+    },
+    {
+      "id": "f28",
+      "name": "f28",
+      "abi": "ft8",
+      "number": 28,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f29",
+      "name": "f29",
+      "abi": "ft9",
+      "number": 29,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f30",
+      "name": "f30",
+      "abi": "ft10",
+      "number": 30,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    },
+    {
+      "id": "f31",
+      "name": "f31",
+      "abi": "ft11",
+      "number": 31,
+      "group": "FPR",
+      "role": "Floating-point register",
+      "saver": "Caller"
+    }
+  ]
+}
