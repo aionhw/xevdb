@@ -3,6 +3,14 @@
 _Generated 2026-07-01. Measured with `coverage run -m pytest` against `src/` and
 `xevdb_ai_debug/`._
 
+> **Update (2026-07-01):** The first three recommendations below have been acted
+> on. New suites `tests/test_cli.py` (44 tests), `tests/test_cache.py` (14), and
+> `tests/test_sv_helpers.py` (21) lifted total CI-parity coverage from **70% →
+> 83%**: `cli.py` 39% → 71%, `cache.py` 52% → 100%, `sv.py` 26% → 84%. The
+> remaining gaps (below) are the `xevdb_ai_debug` package, the RTL-ingest CLI
+> paths and `show.py` that still depend on the `sv-parse` binary, and process
+> items (CI coverage gate, building `sv-parse`/FST in CI).
+
 ## How the numbers were produced
 
 Two runs, because coverage depends heavily on which optional dependencies and
